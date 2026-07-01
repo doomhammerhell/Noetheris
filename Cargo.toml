@@ -12,7 +12,7 @@ version = "0.1.0"
 edition = "2021"
 license = "Apache-2.0"
 authors = ["Mayckon Giovani"]
-repository = "https://github.com/mayckongiovani/noetheris"
+repository = "https://github.com/doomhammerhell/Noetheris"
 description = "Noetheris v0.1.0 — Structural Quantum Security Kernel"
 
 [workspace.dependencies]
