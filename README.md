@@ -2,7 +2,7 @@
 
 **A verifiable quantum-structural framework for invariant search, PQC migration, annealing encodings, circuit-oracle mappings, continuous-variable quantum diagnostics, and security-critical systems.**
 
-[![CI](https://github.com/mayckongiovani/noetheris/actions/workflows/ci.yml/badge.svg)](https://github.com/mayckongiovani/noetheris/actions/workflows/ci.yml)
+[![CI](https://github.com/mayckongiovani/noetheris/actions/workflows/ci.yml/badge.svg)](https://github.com/doomhammerhell/Noetheris/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 
 Noetheris is a research engineering framework for compiling security-critical system structures into optimization, quantum-inspired, quantum-circuit, continuous-variable diagnostic, and formally checkable representations.
