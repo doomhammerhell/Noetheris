@@ -1,0 +1,158 @@
+{
+  "assets": [
+    {
+      "id": "tls_certs",
+      "name": "External TLS certificate chain",
+      "algorithm": "ECDSA-P256",
+      "risk_weight": 8.0,
+      "downtime_cost": 0.4,
+      "compliance_required": true,
+      "harvest_now_decrypt_later": false
+    },
+    {
+      "id": "api_gateway",
+      "name": "API gateway mTLS edge",
+      "algorithm": "ECDSA-P256",
+      "risk_weight": 7.0,
+      "downtime_cost": 0.8,
+      "compliance_required": true,
+      "harvest_now_decrypt_later": false
+    },
+    {
+      "id": "firmware_signing",
+      "name": "Firmware signing service",
+      "algorithm": "RSA-3072",
+      "risk_weight": 9.0,
+      "downtime_cost": 1.2,
+      "compliance_required": true,
+      "harvest_now_decrypt_later": false
+    },
+    {
+      "id": "service_mesh",
+      "name": "Internal service mesh",
+      "algorithm": "ECDSA-P256",
+      "risk_weight": 6.0,
+      "downtime_cost": 0.6,
+      "compliance_required": false,
+      "harvest_now_decrypt_later": false
+    },
+    {
+      "id": "hsm_kms",
+      "name": "HSM-backed KMS",
+      "algorithm": "RSA-3072",
+      "risk_weight": 8.0,
+      "downtime_cost": 1.0,
+      "compliance_required": true,
+      "harvest_now_decrypt_later": false
+    },
+    {
+      "id": "archive",
+      "name": "Long-term encrypted archive",
+      "algorithm": "RSA-OAEP-3072",
+      "risk_weight": 10.0,
+      "downtime_cost": 0.5,
+      "compliance_required": false,
+      "harvest_now_decrypt_later": true
+    }
+  ],
+  "dependencies": [
+    {
+      "asset": "tls_certs",
+      "depends_on": "hsm_kms",
+      "kind": "key custody"
+    },
+    {
+      "asset": "api_gateway",
+      "depends_on": "tls_certs",
+      "kind": "certificate chain"
+    },
+    {
+      "asset": "service_mesh",
+      "depends_on": "api_gateway",
+      "kind": "identity policy"
+    },
+    {
+      "asset": "firmware_signing",
+      "depends_on": "hsm_kms",
+      "kind": "signing key custody"
+    },
+    {
+      "asset": "archive",
+      "depends_on": "hsm_kms",
+      "kind": "key wrapping"
+    }
+  ],
+  "migration_candidates": [
+    {
+      "id": "hsm_kms_hybrid",
+      "asset": "hsm_kms",
+      "target_algorithm": "RSA-3072 + ML-KEM-768 key wrapping",
+      "migration_cost": 7.0,
+      "downtime": 1.0,
+      "risk_reduction": 0.72,
+      "hybrid": true,
+      "compliance_satisfies": true
+    },
+    {
+      "id": "tls_certs_hybrid",
+      "asset": "tls_certs",
+      "target_algorithm": "ECDSA-P256 + Dilithium3 certificate chain",
+      "migration_cost": 4.0,
+      "downtime": 0.5,
+      "risk_reduction": 0.82,
+      "hybrid": true,
+      "compliance_satisfies": true
+    },
+    {
+      "id": "tls_certs_pq_only",
+      "asset": "tls_certs",
+      "target_algorithm": "Dilithium3 certificate chain",
+      "migration_cost": 8.0,
+      "downtime": 1.4,
+      "risk_reduction": 0.88,
+      "hybrid": false,
+      "compliance_satisfies": true,
+      "incompatible_with": ["service_mesh_hybrid"]
+    },
+    {
+      "id": "api_gateway_hybrid",
+      "asset": "api_gateway",
+      "target_algorithm": "hybrid TLS termination",
+      "migration_cost": 5.0,
+      "downtime": 0.8,
+      "risk_reduction": 0.76,
+      "hybrid": true,
+      "compliance_satisfies": true
+    },
+    {
+      "id": "firmware_signing_dilithium",
+      "asset": "firmware_signing",
+      "target_algorithm": "RSA-3072 + Dilithium3 detached signatures",
+      "migration_cost": 6.0,
+      "downtime": 1.0,
+      "risk_reduction": 0.84,
+      "hybrid": true,
+      "compliance_satisfies": true
+    },
+    {
+      "id": "service_mesh_hybrid",
+      "asset": "service_mesh",
+      "target_algorithm": "hybrid workload identity certificates",
+      "migration_cost": 4.5,
+      "downtime": 0.7,
+      "risk_reduction": 0.68,
+      "hybrid": true,
+      "compliance_satisfies": false
+    },
+    {
+      "id": "archive_rewrap_mlkem",
+      "asset": "archive",
+      "target_algorithm": "ML-KEM-1024 envelope rewrap",
+      "migration_cost": 6.5,
+      "downtime": 0.6,
+      "risk_reduction": 0.9,
+      "hybrid": false,
+      "compliance_satisfies": false
+    }
+  ]
+}

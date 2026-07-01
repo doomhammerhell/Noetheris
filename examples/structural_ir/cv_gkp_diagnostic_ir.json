@@ -1,0 +1,28 @@
+{
+  "system_id": "cv_gkp_diagnostic_ir",
+  "version": "0.1.0",
+  "problem_type": "cv_gkp",
+  "metadata": {
+    "scenario": "cv_gkp_diagnostic",
+    "fock_cutoff": "10",
+    "delta": "0.35",
+    "grid_cutoff": "2"
+  },
+  "nodes": [
+    {"id": "mode_0", "kind": "quantum_mode", "label": "Truncated oscillator mode"},
+    {"id": "gkp_zero", "kind": "state", "label": "Approximate GKP zero"},
+    {"id": "boundary", "kind": "constraint", "label": "Fock boundary"}
+  ],
+  "edges": [
+    {"id": "state_on_mode", "source": "gkp_zero", "target": "mode_0", "kind": "coupling", "cost": 0.0},
+    {"id": "boundary_affects_mode", "source": "boundary", "target": "mode_0", "kind": "coupling", "cost": 0.0}
+  ],
+  "constraints": [
+    {"id": "boundary_population_bound", "kind": "cardinality_at_most", "expression": "boundary_population <= 0.15", "weight": 50.0, "nodes": ["boundary"]},
+    {"id": "stabilizer_window", "kind": "equality", "expression": "stabilizer_expectation finite", "weight": 20.0, "nodes": ["gkp_zero"]}
+  ],
+  "objectives": [
+    {"id": "minimize_boundary_leakage", "expression": "boundary_population", "weight": 1.0},
+    {"id": "maximize_stabilizer_signal", "expression": "1 - abs(stabilizer_expectation)", "weight": 1.0}
+  ]
+}

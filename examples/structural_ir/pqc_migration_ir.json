@@ -1,0 +1,117 @@
+{
+  "system_id": "pqc_migration_ir",
+  "version": "0.1.0",
+  "problem_type": "migration",
+  "metadata": {
+    "scenario": "enterprise_pqc_migration",
+    "release": "Noetheris v0.1.0 — Structural Quantum Security Kernel"
+  },
+  "nodes": [
+    {
+      "id": "hsm_kms",
+      "kind": "asset",
+      "label": "HSM-backed KMS",
+      "risk": {"category": "key_custody", "weight": 8.0},
+      "crypto": {"algorithm": "RSA-3072", "key_lifetime_days": 3650, "compliance_required": true},
+      "migration_candidates": [
+        {"candidate_id": "hsm_kms_hybrid", "target_algorithm": "RSA-3072 + ML-KEM-768 wrapping", "migration_cost": 7.0, "downtime": 1.0, "risk_reduction": 0.72, "hybrid": true, "compliance_satisfies": true}
+      ]
+    },
+    {
+      "id": "tls_edge",
+      "kind": "asset",
+      "label": "Public TLS certificates",
+      "risk": {"category": "public_edge", "weight": 8.0},
+      "crypto": {"algorithm": "ECDSA-P256", "key_lifetime_days": 397, "compliance_required": true},
+      "migration_candidates": [
+        {"candidate_id": "tls_edge_hybrid", "target_algorithm": "ECDSA-P256 + Dilithium3 chain", "migration_cost": 4.0, "downtime": 0.5, "risk_reduction": 0.82, "hybrid": true, "compliance_satisfies": true}
+      ]
+    },
+    {
+      "id": "api_gateway",
+      "kind": "asset",
+      "label": "API gateway",
+      "risk": {"category": "public_edge", "weight": 7.0},
+      "crypto": {"algorithm": "ECDSA-P256", "key_lifetime_days": 730, "compliance_required": true},
+      "migration_candidates": [
+        {"candidate_id": "api_gateway_hybrid", "target_algorithm": "Hybrid TLS termination", "migration_cost": 5.0, "downtime": 0.8, "risk_reduction": 0.76, "hybrid": true, "compliance_satisfies": true}
+      ]
+    },
+    {
+      "id": "service_mesh",
+      "kind": "asset",
+      "label": "Internal service mesh",
+      "risk": {"category": "service_identity", "weight": 6.0},
+      "crypto": {"algorithm": "ECDSA-P256", "key_lifetime_days": 365, "compliance_required": false},
+      "migration_candidates": [
+        {"candidate_id": "service_mesh_hybrid", "target_algorithm": "Hybrid workload identity", "migration_cost": 4.5, "downtime": 0.7, "risk_reduction": 0.68, "hybrid": true}
+      ]
+    },
+    {
+      "id": "firmware_signing",
+      "kind": "asset",
+      "label": "Firmware signing",
+      "risk": {"category": "signing", "weight": 9.0},
+      "crypto": {"algorithm": "RSA-3072", "key_lifetime_days": 3650, "compliance_required": true},
+      "migration_candidates": [
+        {"candidate_id": "firmware_dilithium", "target_algorithm": "RSA-3072 + Dilithium3 signatures", "migration_cost": 6.0, "downtime": 1.0, "risk_reduction": 0.84, "hybrid": true, "compliance_satisfies": true}
+      ]
+    },
+    {
+      "id": "cicd_signing",
+      "kind": "asset",
+      "label": "CI/CD signing keys",
+      "risk": {"category": "software_supply_chain", "weight": 7.5},
+      "crypto": {"algorithm": "ECDSA-P256", "key_lifetime_days": 1095, "compliance_required": true},
+      "migration_candidates": [
+        {"candidate_id": "cicd_sigstore_hybrid", "target_algorithm": "Sigstore hybrid signing", "migration_cost": 5.5, "downtime": 0.6, "risk_reduction": 0.78, "hybrid": true, "compliance_satisfies": true}
+      ]
+    },
+    {
+      "id": "archive",
+      "kind": "asset",
+      "label": "Long-term encrypted archive",
+      "risk": {"category": "archive", "weight": 10.0, "harvest_now_decrypt_later": true},
+      "crypto": {"algorithm": "RSA-OAEP-3072", "key_lifetime_days": 7300, "compliance_required": false},
+      "migration_candidates": [
+        {"candidate_id": "archive_mlkem_rewrap", "target_algorithm": "ML-KEM-1024 envelope rewrap", "migration_cost": 6.5, "downtime": 0.6, "risk_reduction": 0.9}
+      ]
+    },
+    {
+      "id": "database_encryption",
+      "kind": "asset",
+      "label": "Database encryption",
+      "risk": {"category": "data_at_rest", "weight": 8.5, "harvest_now_decrypt_later": true},
+      "crypto": {"algorithm": "RSA-wrapped AES-256", "key_lifetime_days": 3650, "compliance_required": true},
+      "migration_candidates": [
+        {"candidate_id": "database_hybrid_wrap", "target_algorithm": "Hybrid KMS envelope encryption", "migration_cost": 6.0, "downtime": 0.9, "risk_reduction": 0.83, "hybrid": true, "compliance_satisfies": true}
+      ]
+    },
+    {
+      "id": "legacy_clients",
+      "kind": "asset",
+      "label": "Legacy client compatibility",
+      "risk": {"category": "compatibility", "weight": 4.0},
+      "crypto": {"algorithm": "mixed", "key_lifetime_days": 180, "compliance_required": false}
+    }
+  ],
+  "edges": [
+    {"id": "tls_depends_hsm", "source": "tls_edge", "target": "hsm_kms", "kind": "dependency", "cost": 1.0},
+    {"id": "gateway_depends_tls", "source": "api_gateway", "target": "tls_edge", "kind": "dependency", "cost": 1.0},
+    {"id": "mesh_depends_gateway", "source": "service_mesh", "target": "api_gateway", "kind": "dependency", "cost": 1.0},
+    {"id": "firmware_depends_hsm", "source": "firmware_signing", "target": "hsm_kms", "kind": "dependency", "cost": 1.0},
+    {"id": "cicd_depends_hsm", "source": "cicd_signing", "target": "hsm_kms", "kind": "dependency", "cost": 1.0},
+    {"id": "archive_depends_hsm", "source": "archive", "target": "hsm_kms", "kind": "dependency", "cost": 1.0},
+    {"id": "database_depends_hsm", "source": "database_encryption", "target": "hsm_kms", "kind": "dependency", "cost": 1.0},
+    {"id": "clients_depend_gateway", "source": "legacy_clients", "target": "api_gateway", "kind": "dependency", "cost": 1.0}
+  ],
+  "constraints": [
+    {"id": "dependency_order", "kind": "dependency_required", "expression": "selected(source) => selected(target)", "weight": 90.0},
+    {"id": "compliance_gap", "kind": "implication", "expression": "compliance_required => compliance_satisfies", "weight": 85.0}
+  ],
+  "objectives": [
+    {"id": "residual_risk", "expression": "sum(asset.risk * remaining_exposure)", "weight": 10.0},
+    {"id": "migration_cost", "expression": "sum(candidate.cost)", "weight": 1.0},
+    {"id": "operational_downtime", "expression": "sum(candidate.downtime)", "weight": 1.5}
+  ]
+}

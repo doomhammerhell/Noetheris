@@ -1,0 +1,39 @@
+{
+  "invariant_name": "single_value_commit_safety",
+  "initial_state": "round0_locked_a",
+  "states": [
+    "round0_locked_a",
+    "round1_prepared_a",
+    "round1_prepared_b",
+    "commit_a",
+    "conflicting_commit"
+  ],
+  "transitions": [
+    {
+      "from": "round0_locked_a",
+      "to": "round1_prepared_a",
+      "cost": 1.0,
+      "adversarial": false
+    },
+    {
+      "from": "round1_prepared_a",
+      "to": "commit_a",
+      "cost": 1.0,
+      "adversarial": false
+    },
+    {
+      "from": "round0_locked_a",
+      "to": "round1_prepared_b",
+      "cost": 2.0,
+      "adversarial": true
+    },
+    {
+      "from": "round1_prepared_b",
+      "to": "conflicting_commit",
+      "cost": 2.0,
+      "adversarial": true
+    }
+  ],
+  "forbidden_states": ["conflicting_commit"],
+  "forbidden_transitions": []
+}

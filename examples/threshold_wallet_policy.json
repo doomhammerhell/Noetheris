@@ -1,0 +1,15 @@
+{
+  "policy": "two_of_three_threshold",
+  "signers": ["hsm_a", "hsm_b", "recovery_key"],
+  "threshold": 2,
+  "forbidden_cases": [
+    {
+      "description": "single compromised signer cannot authorize",
+      "bits": [1, 0, 0]
+    },
+    {
+      "description": "recovery key alone cannot authorize",
+      "bits": [0, 0, 1]
+    }
+  ]
+}

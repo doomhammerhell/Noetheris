@@ -1,0 +1,34 @@
+{
+  "system_id": "saga_failure_ir",
+  "version": "0.1.0",
+  "problem_type": "invariant",
+  "metadata": {
+    "scenario": "saga_failure_semantics",
+    "max_depth": "4"
+  },
+  "nodes": [
+    {"id": "start", "kind": "state", "label": "Saga start"},
+    {"id": "debit_posted", "kind": "state", "label": "Debit posted"},
+    {"id": "credit_failed", "kind": "state", "label": "Credit failed"},
+    {"id": "compensated", "kind": "state", "label": "Debit compensated"},
+    {"id": "consistent_terminal", "kind": "state", "label": "Consistent terminal state"},
+    {"id": "inconsistent_terminal", "kind": "state", "label": "Inconsistent terminal state"}
+  ],
+  "edges": [
+    {"id": "post_debit", "source": "start", "target": "debit_posted", "kind": "transition", "cost": 1.0},
+    {"id": "credit_timeout", "source": "debit_posted", "target": "credit_failed", "kind": "transition", "cost": 1.0, "adversarial": true},
+    {"id": "compensate_debit", "source": "credit_failed", "target": "compensated", "kind": "transition", "cost": 1.0},
+    {"id": "finish_compensated", "source": "compensated", "target": "consistent_terminal", "kind": "transition", "cost": 1.0},
+    {"id": "finish_without_compensation", "source": "credit_failed", "target": "inconsistent_terminal", "kind": "transition", "cost": 2.0, "adversarial": true}
+  ],
+  "constraints": [
+    {"id": "initial_start", "kind": "equality", "expression": "initial_state == start", "weight": 80.0, "nodes": ["start"]},
+    {"id": "retry_budget", "kind": "cardinality_at_most", "expression": "adversarial_edges <= 2", "weight": 50.0, "edges": ["credit_timeout", "finish_without_compensation"]}
+  ],
+  "invariants": [
+    {"id": "no_inconsistent_terminal", "kind": "forbidden_state", "expression": "state != inconsistent_terminal", "weight": 100.0, "nodes": ["inconsistent_terminal"]}
+  ],
+  "objectives": [
+    {"id": "minimize_terminal_violation", "expression": "minimize path cost and adversarial transitions", "weight": 1.0}
+  ]
+}

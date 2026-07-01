@@ -1,0 +1,112 @@
+{
+  "algorithm_name": "invariant_annealing_search",
+  "certificate_version": "energy-certificate-v1",
+  "compiled_model_hash": null,
+  "energy_breakdown": {
+    "selected_path_energy": 10.0
+  },
+  "energy_model": [
+    {
+      "contribution": 0.0,
+      "name": "lambda_validity * P_validity",
+      "value": 0.0,
+      "weight": 50.0
+    },
+    {
+      "contribution": 0.0,
+      "name": "lambda_invariant * P_invariant",
+      "value": 0.0,
+      "weight": 40.0
+    },
+    {
+      "contribution": 4.0,
+      "name": "lambda_path * C_path",
+      "value": 4.0,
+      "weight": 1.0
+    },
+    {
+      "contribution": 6.0,
+      "name": "lambda_adversary * C_adversary",
+      "value": 2.0,
+      "weight": 3.0
+    }
+  ],
+  "input_file_hash": null,
+  "objective_value": 10.0,
+  "problem_hash": "sha256:5234e2e50e0b4ef8d477062208451af5b57c4680bb0cfa56a8e88135b3d937eb",
+  "problem_type": "structural_optimization",
+  "proof_obligations": [
+    "recompute_problem_hash",
+    "recompute_selected_path_energy",
+    "check_declared_path_transitions",
+    "check_forbidden_condition_reached"
+  ],
+  "repository_version": "0.1.0",
+  "reproducibility_metadata": {
+    "seed": "2026"
+  },
+  "reproducibility_seed": 2026,
+  "residual_risk": null,
+  "satisfied_constraints": [
+    {
+      "detail": "state graph validation succeeded",
+      "name": "graph_valid",
+      "satisfied": true
+    },
+    {
+      "detail": "selected path follows declared transitions",
+      "name": "path_valid",
+      "satisfied": true
+    },
+    {
+      "detail": "QUBO solution selected one enumerated path variable",
+      "name": "exactly_one_path_selected",
+      "satisfied": true
+    },
+    {
+      "detail": "selected path reaches a declared forbidden condition",
+      "name": "target_violation_found",
+      "satisfied": true
+    }
+  ],
+  "selected_variables": {
+    "path_0": false,
+    "path_1": false,
+    "path_2": false,
+    "path_3": false,
+    "path_4": true
+  },
+  "timestamp_strategy": "deterministic-no-wall-clock",
+  "total_energy": 10.0,
+  "verification_status": "verified",
+  "version": {
+    "project": "noetheris",
+    "schema": "energy-certificate-v1",
+    "version": "0.1.0"
+  },
+  "violated_constraints": [],
+  "witness_assignment": {
+    "adversarial_steps": 2,
+    "path": [
+      "round0_locked_a",
+      "round1_prepared_b",
+      "conflicting_commit"
+    ],
+    "selected_variable": "path_4",
+    "transitions": [
+      {
+        "adversarial": true,
+        "cost": 2.0,
+        "from": "round0_locked_a",
+        "to": "round1_prepared_b"
+      },
+      {
+        "adversarial": true,
+        "cost": 2.0,
+        "from": "round1_prepared_b",
+        "to": "conflicting_commit"
+      }
+    ],
+    "violation_found": true
+  }
+}

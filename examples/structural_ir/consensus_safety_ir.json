@@ -1,0 +1,37 @@
+{
+  "system_id": "consensus_safety_ir",
+  "version": "0.1.0",
+  "problem_type": "invariant",
+  "metadata": {
+    "release": "Noetheris v0.1.0 — Structural Quantum Security Kernel",
+    "scenario": "byzantine_consensus_safety"
+  },
+  "nodes": [
+    {"id": "locked_a", "kind": "state", "label": "Locked value A"},
+    {"id": "prepared_a", "kind": "state", "label": "Prepared value A"},
+    {"id": "prepared_b", "kind": "state", "label": "Prepared value B"},
+    {"id": "commit_a", "kind": "state", "label": "Commit value A"},
+    {"id": "conflicting_commit", "kind": "state", "label": "Conflicting commit"}
+  ],
+  "edges": [
+    {"id": "honest_prepare_a", "source": "locked_a", "target": "prepared_a", "kind": "transition", "cost": 1.0},
+    {"id": "honest_commit_a", "source": "prepared_a", "target": "commit_a", "kind": "transition", "cost": 1.0},
+    {"id": "delayed_prepare_b", "source": "locked_a", "target": "prepared_b", "kind": "transition", "cost": 2.0, "adversarial": true, "annotations": {"budget": "delayed_message"}},
+    {"id": "byzantine_commit_b", "source": "prepared_b", "target": "conflicting_commit", "kind": "transition", "cost": 2.0, "adversarial": true, "annotations": {"budget": "byzantine_actor"}}
+  ],
+  "constraints": [
+    {"id": "initial_locked_a", "kind": "equality", "expression": "initial_state == locked_a", "weight": 80.0, "nodes": ["locked_a"]},
+    {"id": "adversary_budget", "kind": "cardinality_at_most", "expression": "adversarial_edges <= 2", "weight": 50.0, "edges": ["delayed_prepare_b", "byzantine_commit_b"]}
+  ],
+  "invariants": [
+    {"id": "single_commit_safety", "kind": "forbidden_state", "expression": "state != conflicting_commit", "weight": 100.0, "nodes": ["conflicting_commit"]}
+  ],
+  "objectives": [
+    {"id": "minimize_path_cost", "expression": "sum(edge.cost)", "weight": 1.0},
+    {"id": "minimize_adversarial_steps", "expression": "count(edge.adversarial)", "weight": 3.0}
+  ],
+  "adversary_actions": [
+    {"id": "delay_message", "label": "Delayed prepare for value B", "budget_cost": 1.0, "edge_ids": ["delayed_prepare_b"]},
+    {"id": "equivocate_commit", "label": "Byzantine conflicting commit", "budget_cost": 1.0, "edge_ids": ["byzantine_commit_b"]}
+  ]
+}

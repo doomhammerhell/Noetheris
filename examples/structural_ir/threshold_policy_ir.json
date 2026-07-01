@@ -1,0 +1,35 @@
+{
+  "system_id": "threshold_policy_ir",
+  "version": "0.1.0",
+  "problem_type": "threshold",
+  "metadata": {
+    "scenario": "threshold_custody_policy",
+    "threshold": "2",
+    "high_value_requires_whitelist": "true",
+    "time_window_hours": "24"
+  },
+  "nodes": [
+    {"id": "hsm_a", "kind": "actor", "label": "HSM signer A"},
+    {"id": "hsm_b", "kind": "actor", "label": "HSM signer B"},
+    {"id": "recovery_key", "kind": "actor", "label": "Recovery key"},
+    {"id": "whitelist", "kind": "policy", "label": "Destination whitelist"},
+    {"id": "time_window", "kind": "policy", "label": "24h authorization window"},
+    {"id": "high_value_transfer", "kind": "state", "label": "High-value transfer"}
+  ],
+  "edges": [
+    {"id": "a_approves", "source": "hsm_a", "target": "high_value_transfer", "kind": "approval", "cost": 1.0},
+    {"id": "b_approves", "source": "hsm_b", "target": "high_value_transfer", "kind": "approval", "cost": 1.0},
+    {"id": "recovery_approves", "source": "recovery_key", "target": "high_value_transfer", "kind": "approval", "cost": 2.0, "adversarial": true}
+  ],
+  "constraints": [
+    {"id": "two_of_three", "kind": "cardinality_at_least", "expression": "approvals >= 2", "weight": 80.0, "nodes": ["hsm_a", "hsm_b", "recovery_key"]},
+    {"id": "whitelisted_destination", "kind": "equality", "expression": "whitelist == true", "weight": 70.0, "nodes": ["whitelist"]},
+    {"id": "inside_time_window", "kind": "equality", "expression": "time_window == true", "weight": 50.0, "nodes": ["time_window"]}
+  ],
+  "invariants": [
+    {"id": "no_single_signer_transfer", "kind": "cardinality_at_least", "expression": "approvals >= 2", "weight": 80.0}
+  ],
+  "objectives": [
+    {"id": "minimize_policy_bypass", "expression": "minimize approvals and adversarial edges", "weight": 1.0}
+  ]
+}

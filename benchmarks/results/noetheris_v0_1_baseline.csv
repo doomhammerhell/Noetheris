@@ -1,0 +1,11 @@
+problem_name,problem_size,variable_count,constraint_count,solver,seed,runtime_seconds,runtime_policy,energy,certificate_validity,residual_risk,oracle_depth_estimate,boundary_leakage
+consensus_ir,9,5,2,exact,1337,0.0,canonical_baseline_omits_wall_clock,10.0,not_emitted_in_benchmark,,,
+consensus_ir,9,5,2,anneal,1337,0.0,canonical_baseline_omits_wall_clock,10.0,not_emitted_in_benchmark,,,
+saga_ir,11,6,2,exact,1337,0.0,canonical_baseline_omits_wall_clock,10.0,not_emitted_in_benchmark,,,
+saga_ir,11,6,2,anneal,1337,0.0,canonical_baseline_omits_wall_clock,10.0,not_emitted_in_benchmark,,,
+threshold_ir,9,5,3,exact,1337,0.0,canonical_baseline_omits_wall_clock,-155.0,not_emitted_in_benchmark,,,
+threshold_ir,9,5,3,anneal,1337,0.0,canonical_baseline_omits_wall_clock,-155.0,not_emitted_in_benchmark,,,
+pqc_migration_ir,17,8,2,exact,1337,0.0,canonical_baseline_omits_wall_clock,-252.0875000000001,not_emitted_in_benchmark,,,
+pqc_migration_ir,17,8,2,anneal,1337,0.0,canonical_baseline_omits_wall_clock,-252.0875000000001,not_emitted_in_benchmark,,,
+oracle_and_policy,2,2,1,truth_table,1337,0.0,canonical_baseline_omits_wall_clock,0.0,structural_metric,,2,
+cv_gkp_cutoff_8,8,0,2,cv_diagnostic,1337,0.0,canonical_baseline_omits_wall_clock,0.5495058958806234,verified,,,0.0

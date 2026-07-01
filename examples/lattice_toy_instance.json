@@ -1,0 +1,8 @@
+{
+  "basis": [
+    [2, 1],
+    [1, 3]
+  ],
+  "target": [3, 4],
+  "coefficient_bound": 2
+}
