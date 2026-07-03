@@ -1,0 +1,35 @@
+{
+  "artifacts": [
+    {
+      "bytes": 4429,
+      "file": "docs/results/invariant_witness.json"
+    },
+    {
+      "bytes": 6426,
+      "file": "docs/results/compiled_qubo_solution.json"
+    },
+    {
+      "bytes": 6529,
+      "file": "docs/results/pqc_migration_plan.json"
+    },
+    {
+      "bytes": 509,
+      "file": "docs/results/oracle_truth_table.json"
+    },
+    {
+      "bytes": 4431,
+      "file": "docs/results/qaoa_hamiltonian_report.json"
+    },
+    {
+      "bytes": 2416,
+      "file": "docs/results/cv_gkp_diagnostic_certificate.json"
+    },
+    {
+      "bytes": 8980,
+      "file": "docs/results/benchmark_report.json"
+    }
+  ],
+  "regenerate": "python3 scripts/generate_release_results.py",
+  "release": "Noetheris v0.1.0 \u2014 Structural Quantum Security Kernel",
+  "scope": "deterministic release evidence"
+}

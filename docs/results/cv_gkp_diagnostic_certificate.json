@@ -1,0 +1,80 @@
+{
+  "certificate": {
+    "algorithm_name": "cv_gkp_diagnostic",
+    "certificate_version": "energy-certificate-v1",
+    "compiled_model_hash": null,
+    "energy_breakdown": {},
+    "energy_model": [
+      {
+        "contribution": 7.939266360697753e-35,
+        "name": "boundary_population",
+        "value": 7.939266360697753e-35,
+        "weight": 1.0
+      },
+      {
+        "contribution": 0.005004796292242398,
+        "name": "weyl_residual",
+        "value": 0.005004796292242398,
+        "weight": 1.0
+      },
+      {
+        "contribution": 0.587476248518495,
+        "name": "stabilizer_defect",
+        "value": 0.587476248518495,
+        "weight": 1.0
+      }
+    ],
+    "input_file_hash": null,
+    "objective_value": 0.5924810448107374,
+    "problem_hash": "sha256:79725f177ceca028d9abdf8a9d835732ed4fd6e366b4c825bf9d617b7780c356",
+    "problem_type": "cv_gkp_diagnostic",
+    "proof_obligations": [
+      "finite_diagnostics",
+      "bounded_fock_cutoff_declared"
+    ],
+    "repository_version": "0.1.0",
+    "reproducibility_metadata": {
+      "seed": "2026"
+    },
+    "reproducibility_seed": 2026,
+    "residual_risk": null,
+    "satisfied_constraints": [
+      {
+        "detail": "all diagnostic scalar values are finite",
+        "name": "finite_diagnostics",
+        "satisfied": true
+      }
+    ],
+    "selected_variables": {},
+    "timestamp_strategy": "deterministic-no-wall-clock",
+    "total_energy": 0.5924810448107374,
+    "verification_status": "verified",
+    "version": {
+      "project": "noetheris",
+      "schema": "energy-certificate-v1",
+      "version": "0.1.0"
+    },
+    "violated_constraints": [],
+    "witness_assignment": {
+      "boundary_population": 7.939266360697753e-35,
+      "commutator_boundary_norm": 10.0,
+      "cutoff": 10.0,
+      "stabilizer_p_abs": 0.12841146786183508,
+      "stabilizer_p_real": 0.12841146786183508,
+      "stabilizer_x_abs": 0.412523751481505,
+      "stabilizer_x_real": 0.412523751481505,
+      "weyl_residual": 0.005004796292242398
+    }
+  },
+  "certificate_status": "verified",
+  "diagnostics": {
+    "boundary_population": 7.939266360697753e-35,
+    "commutator_boundary_norm": 10.0,
+    "cutoff": 10.0,
+    "stabilizer_p_abs": 0.12841146786183508,
+    "stabilizer_p_real": 0.12841146786183508,
+    "stabilizer_x_abs": 0.412523751481505,
+    "stabilizer_x_real": 0.412523751481505,
+    "weyl_residual": 0.005004796292242398
+  }
+}

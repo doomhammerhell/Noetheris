@@ -28,4 +28,4 @@ The audit gate runs Rust check/test/format/clippy, Python compilation, pytest, e
 bash scripts/run_benchmarks.sh
 ```
 
-The benchmark runner regenerates `benchmarks/results/noetheris_v0_1_baseline.json` and `.csv`. The committed baseline omits wall-clock timing and records a `runtime_policy` field instead, because local timing is machine-dependent. Structural fields, seeds, energies, solver labels, oracle metrics, CV leakage, and model sizes are the reproducibility-critical data.
+The benchmark runner regenerates `benchmarks/results/noetheris_v0_1_baseline.json` and `.csv`. The committed baseline sets `runtime_seconds` to `null` and records a `runtime_policy` field because local timing is machine-dependent. Structural fields, hashes, seeds, replay status, energies, solver labels, oracle metrics, CV leakage, and model sizes are the reproducibility-critical data. Use `python3 benchmarks/run_measured_benchmarks.py` for host-specific timing with environment metadata.

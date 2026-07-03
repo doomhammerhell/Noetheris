@@ -1,0 +1,192 @@
+{
+  "interpretation": "exact statevector check for a tiny local model; no hardware-performance claim",
+  "ising": {
+    "couplings": [
+      {
+        "coefficient": 50.0,
+        "left": "path_0",
+        "right": "path_1"
+      },
+      {
+        "coefficient": 50.0,
+        "left": "path_0",
+        "right": "path_2"
+      },
+      {
+        "coefficient": 50.0,
+        "left": "path_0",
+        "right": "path_3"
+      },
+      {
+        "coefficient": 50.0,
+        "left": "path_0",
+        "right": "path_4"
+      },
+      {
+        "coefficient": 50.0,
+        "left": "path_1",
+        "right": "path_2"
+      },
+      {
+        "coefficient": 50.0,
+        "left": "path_1",
+        "right": "path_3"
+      },
+      {
+        "coefficient": 50.0,
+        "left": "path_1",
+        "right": "path_4"
+      },
+      {
+        "coefficient": 50.0,
+        "left": "path_2",
+        "right": "path_3"
+      },
+      {
+        "coefficient": 50.0,
+        "left": "path_2",
+        "right": "path_4"
+      },
+      {
+        "coefficient": 50.0,
+        "left": "path_3",
+        "right": "path_4"
+      }
+    ],
+    "fields": {
+      "path_0": -170.0,
+      "path_1": -170.5,
+      "path_2": -171.0,
+      "path_3": -172.5,
+      "path_4": -155.0
+    },
+    "hamiltonian_terms": [
+      {
+        "coefficient": 439.0,
+        "operator": "I"
+      },
+      {
+        "coefficient": -170.0,
+        "operator": "Z[path_0]"
+      },
+      {
+        "coefficient": -170.5,
+        "operator": "Z[path_1]"
+      },
+      {
+        "coefficient": -171.0,
+        "operator": "Z[path_2]"
+      },
+      {
+        "coefficient": -172.5,
+        "operator": "Z[path_3]"
+      },
+      {
+        "coefficient": -155.0,
+        "operator": "Z[path_4]"
+      },
+      {
+        "coefficient": 50.0,
+        "operator": "Z[path_0] Z[path_1]"
+      },
+      {
+        "coefficient": 50.0,
+        "operator": "Z[path_0] Z[path_2]"
+      },
+      {
+        "coefficient": 50.0,
+        "operator": "Z[path_0] Z[path_3]"
+      },
+      {
+        "coefficient": 50.0,
+        "operator": "Z[path_0] Z[path_4]"
+      },
+      {
+        "coefficient": 50.0,
+        "operator": "Z[path_1] Z[path_2]"
+      },
+      {
+        "coefficient": 50.0,
+        "operator": "Z[path_1] Z[path_3]"
+      },
+      {
+        "coefficient": 50.0,
+        "operator": "Z[path_1] Z[path_4]"
+      },
+      {
+        "coefficient": 50.0,
+        "operator": "Z[path_2] Z[path_3]"
+      },
+      {
+        "coefficient": 50.0,
+        "operator": "Z[path_2] Z[path_4]"
+      },
+      {
+        "coefficient": 50.0,
+        "operator": "Z[path_3] Z[path_4]"
+      }
+    ],
+    "offset": 439.0,
+    "variables": [
+      "path_0",
+      "path_1",
+      "path_2",
+      "path_3",
+      "path_4"
+    ]
+  },
+  "qaoa_p1": {
+    "angles": {
+      "betas": [
+        0.7853981633974483
+      ],
+      "gammas": [
+        0.7853981633974483
+      ]
+    },
+    "expectation": 139.41421356237518,
+    "most_probable_assignment": {
+      "path_0": true,
+      "path_1": false,
+      "path_2": false,
+      "path_3": true,
+      "path_4": false
+    },
+    "most_probable_energy": 185.0,
+    "probabilities": {
+      "00000": 0.06249999999999947,
+      "00001": 3.194539998755108e-30,
+      "00010": 0.36427669529662815,
+      "00011": 6.477287588963153e-30,
+      "00100": 1.731595187055057e-29,
+      "00101": 1.793070870879898e-29,
+      "00110": 1.6907943611832135e-29,
+      "00111": 1.146710725950313e-30,
+      "01000": 0.010723304703363705,
+      "01001": 1.2651626397674188e-29,
+      "01010": 0.06250000000000136,
+      "01011": 5.061892783883806e-29,
+      "01100": 7.722834632246987e-30,
+      "01101": 8.565621575910844e-30,
+      "01110": 2.0424727801469682e-29,
+      "01111": 9.354482481131853e-30,
+      "10000": 0.06250000000000155,
+      "10001": 1.9586707534418186e-29,
+      "10010": 0.3642766952966385,
+      "10011": 1.2218484753181507e-29,
+      "10100": 5.827478825726899e-30,
+      "10101": 2.05600725283115e-29,
+      "10110": 3.3116943172721825e-29,
+      "10111": 3.298155029763142e-30,
+      "11000": 0.010723304703363745,
+      "11001": 1.5147101974865342e-29,
+      "11010": 0.06250000000000341,
+      "11011": 2.688908758568113e-29,
+      "11100": 1.286259396748859e-30,
+      "11101": 3.7729719926930484e-30,
+      "11110": 2.2901043384979713e-29,
+      "11111": 9.182548094612216e-30
+    }
+  },
+  "source": "consensus invariant QUBO"
+}

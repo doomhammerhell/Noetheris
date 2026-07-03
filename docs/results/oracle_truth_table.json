@@ -1,0 +1,18 @@
+{
+  "expression": "a AND b",
+  "metrics": {
+    "ancilla_count": 1,
+    "cleanup_gate_count": 1,
+    "depth_estimate": 3,
+    "gate_count": 3,
+    "logical_variables": 2
+  },
+  "qasm_like": "OPENQASM-LIKE 0.1;\nqubit target;\nqubit a;\nqubit b;\nqubit ancilla_0;\nAND controls[a,b] targets[ancilla_0];\nXOR_TARGET controls[ancilla_0] targets[target];\nUNCOMPUTE_AND controls[a,b] targets[ancilla_0];",
+  "reversibility_check": true,
+  "truth_table": {
+    "00": 0,
+    "01": 0,
+    "10": 0,
+    "11": 1
+  }
+}

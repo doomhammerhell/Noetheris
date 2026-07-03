@@ -36,5 +36,7 @@ def test_oracle_compiler_truth_table_and_metrics() -> None:
     metrics = oracle.cost_metrics()
     assert metrics["logical_variables"] == 2
     assert metrics["gate_count"] >= 2
+    assert metrics["cleanup_gate_count"] >= 1
     assert oracle.reversibility_check() is True
+    assert "UNCOMPUTE_" in oracle.qasm_like()
     assert "OPENQASM-LIKE" in oracle.qasm_like()

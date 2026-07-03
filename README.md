@@ -23,6 +23,18 @@ Noetheris does not claim quantum advantage, does not assess deployed cryptograph
 - **Formal models:** Lean kernels for Structural IR, certificate validity, graph invariants, Ising energy, QUBO penalty energy, migration dependencies, and Boolean oracles; TLA+ models for consensus, threshold policy, PQC migration, and saga failure semantics.
 - **Benchmarks:** local deterministic baseline runner with JSON/CSV outputs for structural QUBOs, annealing, oracle metrics, and CV/GKP diagnostics.
 
+## Release Evidence
+
+| Claim | Evidence |
+| --- | --- |
+| Structural IR validation and hashing | `tests/test_structural_ir.py`, `examples/structural_ir/*.json`, `docs/results/compiled_qubo_solution.json` |
+| QUBO/Ising energy preservation | `tests/test_qubo.py`, `examples/qubo_ising_qaoa.py`, `docs/results/qaoa_hamiltonian_report.json` |
+| D-Wave/Ocean boundary | `tests/test_optional_integrations.py`, `docs/results/compiled_qubo_solution.json`, `docs/dwave_mapping.md` |
+| IBM/Qiskit oracle boundary | `tests/test_circuits.py`, `tests/test_optional_integrations.py`, `docs/results/oracle_truth_table.json` |
+| Certificate replay | `tests/test_certificates.py`, `examples/example_energy_certificate.json`, `docs/results/invariant_witness.json` |
+| CV/GKP diagnostics | `tests/test_cv.py`, `examples/cv_gkp_stabilizer_diagnostics.py`, `docs/results/cv_gkp_diagnostic_certificate.json` |
+| Release benchmark baseline | `benchmarks/results/noetheris_v0_1_baseline.json`, `benchmarks/results/noetheris_v0_1_baseline.csv`, `docs/results/benchmark_report.json` |
+
 ## Installation
 
 ```bash
@@ -139,7 +151,7 @@ This writes:
 - `benchmarks/results/noetheris_v0_1_baseline.json`
 - `benchmarks/results/noetheris_v0_1_baseline.csv`
 
-Benchmarks are local baselines. They do not compare against IBM or D-Wave hardware unless such runs are explicitly performed and documented.
+Benchmarks are local baselines with problem hashes, compiled-model hashes, assignment hashes, replay status, solver boundary, and embedding status. The committed baseline records `runtime_seconds: null`; use `python3 benchmarks/run_measured_benchmarks.py` for host-specific timing with environment metadata. Benchmarks do not compare against IBM or D-Wave hardware unless such runs are explicitly performed and documented.
 
 ## Formal Methods
 

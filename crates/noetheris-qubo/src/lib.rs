@@ -241,11 +241,6 @@ impl IsingModel {
 
 impl QuboModel {
     pub fn validate(&self) -> Result<()> {
-        if self.variables.len() > 24 {
-            return Err(NoetherisError::InvalidQubo(
-                "exhaustive solver is bounded to 24 variables".to_string(),
-            ));
-        }
         for variable in &self.variables {
             if variable.trim().is_empty() {
                 return Err(NoetherisError::InvalidQubo(
@@ -379,6 +374,11 @@ impl QuboModel {
     pub fn exhaustive_solve(&self) -> Result<QuboSolution> {
         self.validate()?;
         let n = self.variables.len();
+        if n > 24 {
+            return Err(NoetherisError::InvalidQubo(
+                "local exhaustive QUBO solver is bounded to 24 variables".to_string(),
+            ));
+        }
         let limit = 1_u64 << n;
         let mut best: Option<QuboSolution> = None;
         for mask in 0..limit {
@@ -470,5 +470,17 @@ mod tests {
         let first = solver.solve(&model).unwrap();
         let second = solver.solve(&model).unwrap();
         assert_eq!(first, second);
+    }
+
+    #[test]
+    fn structural_validation_allows_large_export_models() {
+        let model = QuboModel {
+            variables: (0..25).map(|idx| format!("x{idx}")).collect(),
+            linear: BTreeMap::new(),
+            quadratic: vec![],
+            constant: 0.0,
+        };
+        assert!(model.validate().is_ok());
+        assert!(model.exhaustive_solve().is_err());
     }
 }

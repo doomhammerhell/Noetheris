@@ -15,12 +15,12 @@ Rust owns deterministic schema surfaces and validation invariants.
 
 - `noetheris.ir`: Structural IR loading, validation, serialization, and hashing.
 - `noetheris.qubo`: compilers, solvers, reverse mapping, energy evaluation, and solution explanation.
-- `noetheris.annealing`: invariant search and optional D-Wave conceptual export.
+- `noetheris.annealing`: invariant search and optional dimod BQM export.
 - `noetheris.migration`: enterprise PQC migration optimizer.
 - `noetheris.circuits`: Boolean AST, symbolic oracle compiler, QAOA statevector simulation, and Qiskit boundary.
 - `noetheris.cv`: Fock-space operators, truncation diagnostics, displacement, squeezing, GKP diagnostics, entanglement, Gaussian bridge, and Lindblad dynamics.
 - `noetheris.certificates`: certificate generation, validation, replay, and fingerprinting.
-- `noetheris.backends`: optional Qiskit and D-Wave/Ocean boundaries.
+- `noetheris.backends`: optional Qiskit and D-Wave/Ocean boundaries with structured exchange payloads and local replay.
 - `noetheris.cli`: release CLI.
 
 ## Trust Boundary

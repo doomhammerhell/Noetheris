@@ -101,15 +101,23 @@ class OracleCircuit:
         return table
 
     def cost_metrics(self) -> dict[str, int]:
+        cleanup_count = sum(1 for gate in self.gates if gate.name.startswith("UNCOMPUTE_"))
         return {
             "logical_variables": len(self.variables),
             "ancilla_count": self.ancilla_count,
             "gate_count": len(self.gates),
+            "cleanup_gate_count": cleanup_count,
             "depth_estimate": len(self.gates),
         }
 
     def reversibility_check(self) -> bool:
-        return all(gate.targets for gate in self.gates)
+        compute_count = sum(
+            1
+            for gate in self.gates
+            if gate.targets and not gate.name.startswith("UNCOMPUTE_") and gate.name != "XOR_TARGET"
+        )
+        cleanup_count = sum(1 for gate in self.gates if gate.name.startswith("UNCOMPUTE_"))
+        return all(gate.targets for gate in self.gates) and compute_count == cleanup_count
 
     def qasm_like(self) -> str:
         lines = ["OPENQASM-LIKE 0.1;", "qubit target;"]
@@ -127,6 +135,7 @@ class OracleCircuit:
 def build_oracle(expression: BoolExpr, *, name: str = "phi") -> OracleCircuit:
     variables = expression.variables()
     gates: list[SymbolicGate] = []
+    compute_gates: list[SymbolicGate] = []
     ancilla_counter = 0
 
     def lower(expr: BoolExpr) -> str:
@@ -137,7 +146,9 @@ def build_oracle(expression: BoolExpr, *, name: str = "phi") -> OracleCircuit:
             target = f"ancilla_{ancilla_counter}"
             ancilla_counter += 1
             if expr.name == "1":
-                gates.append(SymbolicGate("X", (), (target,)))
+                gate = SymbolicGate("X", (), (target,))
+                gates.append(gate)
+                compute_gates.append(gate)
             return target
         child_targets = tuple(lower(arg) for arg in expr.args)
         target = f"ancilla_{ancilla_counter}"
@@ -150,11 +161,21 @@ def build_oracle(expression: BoolExpr, *, name: str = "phi") -> OracleCircuit:
             "implies": "IMPLIES",
             "eq": "EQ",
         }[expr.op]
-        gates.append(SymbolicGate(gate_name, child_targets, (target,)))
+        gate = SymbolicGate(gate_name, child_targets, (target,))
+        gates.append(gate)
+        compute_gates.append(gate)
         return target
 
     predicate_wire = lower(expression)
-    gates.append(SymbolicGate(f"O_{name}", (predicate_wire,), ("target",)))
+    gates.append(SymbolicGate("XOR_TARGET", (predicate_wire,), ("target",)))
+    for gate in reversed(compute_gates):
+        gates.append(
+            SymbolicGate(
+                f"UNCOMPUTE_{gate.name}",
+                gate.controls,
+                gate.targets,
+            )
+        )
     return OracleCircuit(
         variables=variables,
         expression=expression,

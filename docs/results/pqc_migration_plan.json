@@ -1,0 +1,238 @@
+{
+  "blocking_dependencies": [],
+  "certificate": {
+    "algorithm_name": "post_quantum_migration_optimizer",
+    "certificate_version": "energy-certificate-v1",
+    "compiled_model_hash": null,
+    "energy_breakdown": {},
+    "energy_model": [
+      {
+        "contribution": 800.0,
+        "name": "qubo_constant",
+        "value": 800.0,
+        "weight": 1.0
+      },
+      {
+        "contribution": -65.80000000000001,
+        "name": "qubo_linear:api_gateway_hybrid",
+        "value": 1.0,
+        "weight": -65.80000000000001
+      },
+      {
+        "contribution": -21.849999999999994,
+        "name": "qubo_linear:archive_rewrap_mlkem",
+        "value": 1.0,
+        "weight": -21.849999999999994
+      },
+      {
+        "contribution": -86.30000000000001,
+        "name": "qubo_linear:firmware_signing_dilithium",
+        "value": 1.0,
+        "weight": -86.30000000000001
+      },
+      {
+        "contribution": -127.6,
+        "name": "qubo_linear:hsm_kms_hybrid",
+        "value": 1.0,
+        "weight": -127.6
+      },
+      {
+        "contribution": 25.65,
+        "name": "qubo_linear:service_mesh_hybrid",
+        "value": 1.0,
+        "weight": 25.65
+      },
+      {
+        "contribution": -80.25,
+        "name": "qubo_linear:tls_certs_hybrid",
+        "value": 1.0,
+        "weight": -80.25
+      },
+      {
+        "contribution": -60.0,
+        "name": "qubo_quadratic:tls_certs_hybrid:hsm_kms_hybrid",
+        "value": 1.0,
+        "weight": -60.0
+      },
+      {
+        "contribution": -60.0,
+        "name": "qubo_quadratic:api_gateway_hybrid:tls_certs_hybrid",
+        "value": 1.0,
+        "weight": -60.0
+      },
+      {
+        "contribution": -60.0,
+        "name": "qubo_quadratic:service_mesh_hybrid:api_gateway_hybrid",
+        "value": 1.0,
+        "weight": -60.0
+      },
+      {
+        "contribution": -60.0,
+        "name": "qubo_quadratic:firmware_signing_dilithium:hsm_kms_hybrid",
+        "value": 1.0,
+        "weight": -60.0
+      },
+      {
+        "contribution": -60.0,
+        "name": "qubo_quadratic:archive_rewrap_mlkem:hsm_kms_hybrid",
+        "value": 1.0,
+        "weight": -60.0
+      }
+    ],
+    "input_file_hash": null,
+    "objective_value": 143.8499999999999,
+    "problem_hash": "sha256:cc2dbbd1f47abcd195994b6c8e17b62ce5e8e77d25ea8325858ed26f0248cec1",
+    "problem_type": "structural_optimization",
+    "proof_obligations": [],
+    "repository_version": "0.1.0",
+    "reproducibility_metadata": {
+      "seed": "2026"
+    },
+    "reproducibility_seed": 2026,
+    "residual_risk": null,
+    "satisfied_constraints": [
+      {
+        "detail": "selected assignment contains at most one candidate per asset",
+        "name": "one_candidate_per_asset",
+        "satisfied": true
+      },
+      {
+        "detail": "selected migrations include required selected dependencies",
+        "name": "dependencies_respected",
+        "satisfied": true
+      },
+      {
+        "detail": "all compliance-required assets have satisfying migrations",
+        "name": "compliance_requirements",
+        "satisfied": true
+      }
+    ],
+    "selected_variables": {
+      "api_gateway_hybrid": true,
+      "archive_rewrap_mlkem": true,
+      "firmware_signing_dilithium": true,
+      "hsm_kms_hybrid": true,
+      "service_mesh_hybrid": true,
+      "tls_certs_hybrid": true,
+      "tls_certs_pq_only": false
+    },
+    "timestamp_strategy": "deterministic-no-wall-clock",
+    "total_energy": 143.8499999999999,
+    "verification_status": "verified",
+    "version": {
+      "project": "noetheris",
+      "schema": "energy-certificate-v1",
+      "version": "0.1.0"
+    },
+    "violated_constraints": [],
+    "witness_assignment": {}
+  },
+  "energy": 143.8499999999999,
+  "ordered_steps": [
+    {
+      "asset_id": "hsm_kms",
+      "candidate_id": "hsm_kms_hybrid",
+      "hybrid": true,
+      "target_algorithm": "RSA-3072 + ML-KEM-768 key wrapping"
+    },
+    {
+      "asset_id": "tls_certs",
+      "candidate_id": "tls_certs_hybrid",
+      "hybrid": true,
+      "target_algorithm": "ECDSA-P256 + Dilithium3 certificate chain"
+    },
+    {
+      "asset_id": "api_gateway",
+      "candidate_id": "api_gateway_hybrid",
+      "hybrid": true,
+      "target_algorithm": "hybrid TLS termination"
+    },
+    {
+      "asset_id": "archive",
+      "candidate_id": "archive_rewrap_mlkem",
+      "hybrid": false,
+      "target_algorithm": "ML-KEM-1024 envelope rewrap"
+    },
+    {
+      "asset_id": "firmware_signing",
+      "candidate_id": "firmware_signing_dilithium",
+      "hybrid": true,
+      "target_algorithm": "RSA-3072 + Dilithium3 detached signatures"
+    },
+    {
+      "asset_id": "service_mesh",
+      "candidate_id": "service_mesh_hybrid",
+      "hybrid": true,
+      "target_algorithm": "hybrid workload identity certificates"
+    }
+  ],
+  "qubo": {
+    "constant": 800.0,
+    "linear": {
+      "api_gateway_hybrid": -65.80000000000001,
+      "archive_rewrap_mlkem": -21.849999999999994,
+      "firmware_signing_dilithium": -86.30000000000001,
+      "hsm_kms_hybrid": -127.6,
+      "service_mesh_hybrid": 25.65,
+      "tls_certs_hybrid": -80.25,
+      "tls_certs_pq_only": -79.69999999999999
+    },
+    "quadratic": [
+      {
+        "coefficient": 500.0,
+        "left": "tls_certs_hybrid",
+        "right": "tls_certs_pq_only"
+      },
+      {
+        "coefficient": 100.0,
+        "left": "service_mesh_hybrid",
+        "right": "tls_certs_pq_only"
+      },
+      {
+        "coefficient": -60.0,
+        "left": "tls_certs_hybrid",
+        "right": "hsm_kms_hybrid"
+      },
+      {
+        "coefficient": -60.0,
+        "left": "tls_certs_pq_only",
+        "right": "hsm_kms_hybrid"
+      },
+      {
+        "coefficient": -60.0,
+        "left": "api_gateway_hybrid",
+        "right": "tls_certs_hybrid"
+      },
+      {
+        "coefficient": -60.0,
+        "left": "api_gateway_hybrid",
+        "right": "tls_certs_pq_only"
+      },
+      {
+        "coefficient": -60.0,
+        "left": "service_mesh_hybrid",
+        "right": "api_gateway_hybrid"
+      },
+      {
+        "coefficient": -60.0,
+        "left": "firmware_signing_dilithium",
+        "right": "hsm_kms_hybrid"
+      },
+      {
+        "coefficient": -60.0,
+        "left": "archive_rewrap_mlkem",
+        "right": "hsm_kms_hybrid"
+      }
+    ],
+    "variables": [
+      "hsm_kms_hybrid",
+      "tls_certs_hybrid",
+      "tls_certs_pq_only",
+      "api_gateway_hybrid",
+      "firmware_signing_dilithium",
+      "service_mesh_hybrid",
+      "archive_rewrap_mlkem"
+    ]
+  },
+  "residual_risk": 9.97
+}

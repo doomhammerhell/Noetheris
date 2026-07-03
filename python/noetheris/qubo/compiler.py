@@ -256,6 +256,62 @@ def explain_solution(compiled: CompiledProblem, solution: QuboSolution) -> dict[
     }
 
 
+def replay_external_solution(
+    compiled: CompiledProblem,
+    assignment: Mapping[str, bool | int],
+    *,
+    reported_energy: float | None = None,
+    problem_hash: str | None = None,
+    compiled_model_hash: str | None = None,
+    solver_metadata: Mapping[str, Any] | None = None,
+    embedding_metadata: Mapping[str, Any] | None = None,
+    tolerance: float = 1e-9,
+) -> dict[str, Any]:
+    reasons: list[str] = []
+    if problem_hash is not None and problem_hash != compiled.problem_hash:
+        reasons.append("problem hash mismatch")
+    if compiled_model_hash is not None and compiled_model_hash != compiled.compiled_model_hash:
+        reasons.append("compiled model hash mismatch")
+    try:
+        normalized_assignment = {
+            name: bool(value) for name, value in assignment.items()
+        }
+        energy = compiled.model.evaluate(normalized_assignment)
+    except ValueError as exc:
+        return {
+            "status": "rejected",
+            "reasons": [str(exc)],
+            "solver_metadata": _jsonable(dict(solver_metadata or {})),
+            "embedding_metadata": _jsonable(dict(embedding_metadata or {})),
+        }
+    if reported_energy is not None and abs(float(reported_energy) - energy) > tolerance:
+        reasons.append("reported energy mismatch")
+    status = "verified" if not reasons else "rejected"
+    return {
+        "status": status,
+        "reasons": reasons,
+        "problem_hash": compiled.problem_hash,
+        "compiled_model_hash": compiled.compiled_model_hash,
+        "assignment": {
+            variable: normalized_assignment[variable]
+            for variable in compiled.model.variables
+        },
+        "energy": energy,
+        "reported_energy": reported_energy,
+        "energy_recomputed": status == "verified",
+        "solver_boundary": "external solver output is an untrusted witness until replay verifies it",
+        "solver_metadata": _jsonable(dict(solver_metadata or {})),
+        "embedding_metadata": _jsonable(
+            dict(
+                embedding_metadata
+                or {
+                    "embedding_status": "not_requested",
+                    "embedding": None,
+                }
+            )
+        ),
+    }
+
 def compile_system(system: StructuralSystem, problem: str) -> CompiledProblem:
     if problem == "invariant":
         return compile_invariant_search_to_qubo(system)

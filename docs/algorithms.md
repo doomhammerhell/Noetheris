@@ -22,9 +22,13 @@ The plan is valid only if compliance requirements are satisfied, at most one can
 
 Certificates are JSON objects containing problem hash, algorithm name, energy model, selected variables, satisfied constraints, violated constraints, total energy, objective value, witness assignment, reproducibility metadata, proof obligations, and version metadata. Verification recomputes contributions and rejects inconsistent energy, violated constraints, unstable timestamp strategy, or incompatible objective values.
 
+## External Solver Replay
+
+External solver samples are replayed against the compiled problem rather than trusted by source. Replay checks problem hash, compiled-model hash, exact variable set, reported energy, and local energy recomputation. Embedding metadata is explicit and remains absent for local baselines.
+
 ## Security Invariant Circuit Mapping
 
-The circuit module represents Boolean invariant predicates as oracle-like transformations. The exact simulator evaluates all tiny input states. Qiskit export is optional and intentionally limited to an integration boundary.
+The circuit module represents Boolean invariant predicates as oracle-like transformations. The exact simulator evaluates all tiny input states. The symbolic compiler exposes compute/apply/uncompute phases and cleanup-gate counts. Qiskit export is optional and intentionally limited to small truth-table synthesis.
 
 ## Continuous-Variable Diagnostics
 

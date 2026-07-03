@@ -21,6 +21,7 @@ from noetheris.cv.gkp import (
     approximate_gkp_one_state,
     approximate_gkp_zero_state,
     gkp_diagnostics,
+    gkp_stabilizer_spacing,
     gkp_stabilizers,
 )
 from noetheris.cv.lindblad import (
@@ -57,6 +58,7 @@ __all__ = [
     "dephasing_channel",
     "displacement",
     "gkp_diagnostics",
+    "gkp_stabilizer_spacing",
     "gkp_stabilizers",
     "leakage_report",
     "liouvillian",

@@ -9,10 +9,16 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "python"))
 
+from noetheris.certificates import stable_problem_hash
 from noetheris.circuits import AND, BoolExpr, build_oracle
 from noetheris.cv import cv_diagnostic_certificate
 from noetheris.ir import StructuralSystem
-from noetheris.qubo import compile_system, solve_exact, solve_simulated_annealing
+from noetheris.qubo import (
+    compile_system,
+    replay_external_solution,
+    solve_exact,
+    solve_simulated_annealing,
+)
 
 
 def run_benchmarks(*, small: bool = True) -> dict[str, Any]:
@@ -31,18 +37,33 @@ def run_benchmarks(*, small: bool = True) -> dict[str, Any]:
                 if solver_name == "exact"
                 else solve_simulated_annealing(compiled, seed=1337, sweeps=64 if small else 256)
             )
+            replay = replay_external_solution(
+                compiled,
+                solution.assignment,
+                reported_energy=solution.energy,
+                problem_hash=compiled.problem_hash,
+                compiled_model_hash=compiled.compiled_model_hash,
+                solver_metadata={"solver": solver_name, "seed": 1337},
+            )
             records.append(
                 {
                     "problem_name": name,
+                    "problem_hash": compiled.problem_hash,
+                    "compiled_model_hash": compiled.compiled_model_hash,
+                    "assignment_hash": stable_problem_hash(solution.assignment),
                     "problem_size": len(system.nodes) + len(system.edges),
                     "variable_count": len(compiled.model.variables),
                     "constraint_count": len(compiled.constraints),
                     "solver": solver_name,
                     "seed": 1337,
-                    "runtime_seconds": 0.0,
+                    "runtime_seconds": None,
                     "runtime_policy": "canonical_baseline_omits_wall_clock",
                     "energy": solution.energy,
-                    "certificate_validity": "not_emitted_in_benchmark",
+                    "energy_recomputed": replay["energy_recomputed"],
+                    "validation_status": replay["status"],
+                    "solver_boundary": "local deterministic baseline",
+                    "embedding_status": "not_requested",
+                    "embedding": None,
                     "residual_risk": None,
                     "oracle_depth_estimate": None,
                     "boundary_leakage": None,
@@ -54,15 +75,22 @@ def run_benchmarks(*, small: bool = True) -> dict[str, Any]:
     records.append(
         {
             "problem_name": "oracle_and_policy",
+            "problem_hash": stable_problem_hash({"truth_table": oracle.truth_table()}),
+            "compiled_model_hash": stable_problem_hash(oracle.cost_metrics()),
+            "assignment_hash": None,
             "problem_size": metrics["logical_variables"],
             "variable_count": metrics["logical_variables"],
             "constraint_count": 1,
             "solver": "truth_table",
             "seed": 1337,
-            "runtime_seconds": 0.0,
+            "runtime_seconds": None,
             "runtime_policy": "canonical_baseline_omits_wall_clock",
             "energy": 0.0,
-            "certificate_validity": "structural_metric",
+            "energy_recomputed": True,
+            "validation_status": "truth_table_verified",
+            "solver_boundary": "local symbolic oracle",
+            "embedding_status": "not_applicable",
+            "embedding": None,
             "residual_risk": None,
             "oracle_depth_estimate": metrics["depth_estimate"],
             "boundary_leakage": None,
@@ -72,15 +100,22 @@ def run_benchmarks(*, small: bool = True) -> dict[str, Any]:
     records.append(
         {
             "problem_name": "cv_gkp_cutoff_8",
+            "problem_hash": stable_problem_hash({"cutoff": 8, "delta": 0.4, "grid_cutoff": 1}),
+            "compiled_model_hash": cv["certificate"]["problem_hash"],
+            "assignment_hash": None,
             "problem_size": 8,
             "variable_count": 0,
             "constraint_count": 2,
             "solver": "cv_diagnostic",
             "seed": 1337,
-            "runtime_seconds": 0.0,
+            "runtime_seconds": None,
             "runtime_policy": "canonical_baseline_omits_wall_clock",
             "energy": cv["certificate"]["total_energy"],
-            "certificate_validity": cv["certificate_status"],
+            "energy_recomputed": True,
+            "validation_status": f"certificate_{cv['certificate_status']}",
+            "solver_boundary": "local finite-fock diagnostic",
+            "embedding_status": "not_applicable",
+            "embedding": None,
             "residual_risk": None,
             "oracle_depth_estimate": None,
             "boundary_leakage": cv["diagnostics"]["boundary_population"],

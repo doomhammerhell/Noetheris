@@ -8,4 +8,4 @@ For predicate `phi`, the oracle relation is:
 O_phi |x>|y> = |x>|y xor phi(x)>.
 ```
 
-The compiler emits symbolic gates, a truth table, QASM-like text, cost metrics, and a reversibility check. Optional Qiskit export is available when Qiskit is installed; no IBM Quantum credentials are required.
+The compiler emits symbolic compute/apply/uncompute gates, a truth table, QASM-like text, cost metrics, cleanup-gate counts, and a reversibility check. Optional Qiskit truth-table synthesis is available for small predicates when Qiskit is installed; no IBM Quantum credentials are required.

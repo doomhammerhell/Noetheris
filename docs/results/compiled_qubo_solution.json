@@ -1,0 +1,291 @@
+{
+  "compiled": {
+    "compiled_model_hash": "sha256:eca1158e2ddfdfe196775a49b8ffbcd46a23a33bf61e18e8229dcda0174612d2",
+    "constraints": [
+      "initial_locked_a",
+      "adversary_budget"
+    ],
+    "model": {
+      "constant": 100.0,
+      "linear": {
+        "path_0": 0.0,
+        "path_1": 1.0,
+        "path_2": 2.0,
+        "path_3": 5.0,
+        "path_4": -90.0
+      },
+      "quadratic": [
+        {
+          "coefficient": 200.0,
+          "left": "path_0",
+          "right": "path_1"
+        },
+        {
+          "coefficient": 200.0,
+          "left": "path_0",
+          "right": "path_2"
+        },
+        {
+          "coefficient": 200.0,
+          "left": "path_0",
+          "right": "path_3"
+        },
+        {
+          "coefficient": 200.0,
+          "left": "path_0",
+          "right": "path_4"
+        },
+        {
+          "coefficient": 200.0,
+          "left": "path_1",
+          "right": "path_2"
+        },
+        {
+          "coefficient": 200.0,
+          "left": "path_1",
+          "right": "path_3"
+        },
+        {
+          "coefficient": 200.0,
+          "left": "path_1",
+          "right": "path_4"
+        },
+        {
+          "coefficient": 200.0,
+          "left": "path_2",
+          "right": "path_3"
+        },
+        {
+          "coefficient": 200.0,
+          "left": "path_2",
+          "right": "path_4"
+        },
+        {
+          "coefficient": 200.0,
+          "left": "path_3",
+          "right": "path_4"
+        }
+      ],
+      "variables": [
+        "path_0",
+        "path_1",
+        "path_2",
+        "path_3",
+        "path_4"
+      ]
+    },
+    "objective_components": [
+      "minimize_path_cost",
+      "minimize_adversarial_steps"
+    ],
+    "problem_hash": "sha256:3cddd03a5881f3b71ba61c3b063f96ec47dba9f9160a634392929eca618d095f",
+    "problem_type": "invariant",
+    "reverse_map": {
+      "path_0": {
+        "edges": [],
+        "states": [
+          "locked_a"
+        ]
+      },
+      "path_1": {
+        "edges": [
+          "honest_prepare_a"
+        ],
+        "states": [
+          "locked_a",
+          "prepared_a"
+        ]
+      },
+      "path_2": {
+        "edges": [
+          "honest_prepare_a",
+          "honest_commit_a"
+        ],
+        "states": [
+          "locked_a",
+          "prepared_a",
+          "commit_a"
+        ]
+      },
+      "path_3": {
+        "edges": [
+          "delayed_prepare_b"
+        ],
+        "states": [
+          "locked_a",
+          "prepared_b"
+        ]
+      },
+      "path_4": {
+        "edges": [
+          "delayed_prepare_b",
+          "byzantine_commit_b"
+        ],
+        "states": [
+          "locked_a",
+          "prepared_b",
+          "conflicting_commit"
+        ]
+      }
+    },
+    "variable_metadata": {
+      "path_0": "bounded path locked_a",
+      "path_1": "bounded path locked_a -> prepared_a",
+      "path_2": "bounded path locked_a -> prepared_a -> commit_a",
+      "path_3": "bounded path locked_a -> prepared_b",
+      "path_4": "bounded path locked_a -> prepared_b -> conflicting_commit"
+    }
+  },
+  "dwave_exchange": {
+    "format": "noetheris.qubo.exchange.v1",
+    "linear_terms": [
+      {
+        "coefficient": 1.0,
+        "variable": "path_1"
+      },
+      {
+        "coefficient": 2.0,
+        "variable": "path_2"
+      },
+      {
+        "coefficient": 5.0,
+        "variable": "path_3"
+      },
+      {
+        "coefficient": -90.0,
+        "variable": "path_4"
+      }
+    ],
+    "model_hash": "sha256:abb217c2c5893c3dc6bf88de18b2ad53c9a54dc19799398fdd1bd41d7ad6aad7",
+    "normalization": {
+      "duplicate_pairs": "aggregated",
+      "reversed_pairs": "ordered_by_variable_list",
+      "self_quadratic": "folded_into_linear"
+    },
+    "offset": 100.0,
+    "quadratic_terms": [
+      {
+        "coefficient": 200.0,
+        "left": "path_0",
+        "right": "path_1"
+      },
+      {
+        "coefficient": 200.0,
+        "left": "path_0",
+        "right": "path_2"
+      },
+      {
+        "coefficient": 200.0,
+        "left": "path_0",
+        "right": "path_3"
+      },
+      {
+        "coefficient": 200.0,
+        "left": "path_0",
+        "right": "path_4"
+      },
+      {
+        "coefficient": 200.0,
+        "left": "path_1",
+        "right": "path_2"
+      },
+      {
+        "coefficient": 200.0,
+        "left": "path_1",
+        "right": "path_3"
+      },
+      {
+        "coefficient": 200.0,
+        "left": "path_1",
+        "right": "path_4"
+      },
+      {
+        "coefficient": 200.0,
+        "left": "path_2",
+        "right": "path_3"
+      },
+      {
+        "coefficient": 200.0,
+        "left": "path_2",
+        "right": "path_4"
+      },
+      {
+        "coefficient": 200.0,
+        "left": "path_3",
+        "right": "path_4"
+      }
+    ],
+    "variables": [
+      "path_0",
+      "path_1",
+      "path_2",
+      "path_3",
+      "path_4"
+    ],
+    "vartype": "BINARY"
+  },
+  "explanation": {
+    "energy": 10.0,
+    "energy_breakdown": {
+      "components": [
+        {
+          "contribution": 100.0,
+          "name": "constant"
+        },
+        {
+          "contribution": -90.0,
+          "name": "linear:path_4"
+        }
+      ],
+      "total": 10.0
+    },
+    "problem_type": "invariant",
+    "selected": {
+      "path_4": {
+        "edges": [
+          "delayed_prepare_b",
+          "byzantine_commit_b"
+        ],
+        "states": [
+          "locked_a",
+          "prepared_b",
+          "conflicting_commit"
+        ]
+      }
+    }
+  },
+  "external_sample_replay": {
+    "assignment": {
+      "path_0": false,
+      "path_1": false,
+      "path_2": false,
+      "path_3": false,
+      "path_4": true
+    },
+    "compiled_model_hash": "sha256:eca1158e2ddfdfe196775a49b8ffbcd46a23a33bf61e18e8229dcda0174612d2",
+    "embedding_metadata": {
+      "embedding": null,
+      "embedding_status": "not_requested"
+    },
+    "energy": 10.0,
+    "energy_recomputed": true,
+    "problem_hash": "sha256:3cddd03a5881f3b71ba61c3b063f96ec47dba9f9160a634392929eca618d095f",
+    "reasons": [],
+    "reported_energy": 10.0,
+    "solver_boundary": "external solver output is an untrusted witness until replay verifies it",
+    "solver_metadata": {
+      "source": "local_exact_solver"
+    },
+    "status": "verified"
+  },
+  "solution": {
+    "assignment": {
+      "path_0": false,
+      "path_1": false,
+      "path_2": false,
+      "path_3": false,
+      "path_4": true
+    },
+    "energy": 10.0
+  }
+}

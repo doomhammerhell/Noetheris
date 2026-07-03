@@ -16,6 +16,7 @@ from noetheris.qubo.compiler import (
     energy_breakdown,
     evaluate_energy,
     explain_solution,
+    replay_external_solution,
     solve_exact,
     solve_simulated_annealing,
 )
@@ -36,6 +37,7 @@ __all__ = [
     "energy_breakdown",
     "evaluate_energy",
     "explain_solution",
+    "replay_external_solution",
     "solve_exact",
     "solve_simulated_annealing",
 ]

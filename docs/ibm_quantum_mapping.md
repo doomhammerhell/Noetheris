@@ -12,7 +12,7 @@ This is the bridge from invariant checking to gate-model reasoning.
 
 ## Oracle Construction
 
-Noetheris builds a symbolic circuit description with input bits, a target bit, predicate computation, xor application, and predicate uncomputation. The base implementation simulates the mapping exactly for tiny examples.
+Noetheris builds a symbolic circuit description with input bits, a target bit, predicate computation, target xor, and predicate uncomputation. The implementation simulates the mapping exactly for tiny examples and exposes cleanup-gate counts so reversible structure is inspectable.
 
 ## Dynamic Circuit Relevance
 
@@ -20,7 +20,7 @@ Dynamic circuits are relevant when verification, branching, or mid-circuit measu
 
 ## Simulator-First Approach
 
-The repository runs locally without IBM Quantum credentials. Optional Qiskit export is skipped when Qiskit is unavailable and does not affect certificate validation.
+The repository runs locally without IBM Quantum credentials. Optional Qiskit export is skipped when Qiskit is unavailable and does not affect certificate validation. When Qiskit is installed, Noetheris can synthesize a small truth-table oracle into a `QuantumCircuit` summary for review.
 
 ## QAOA Relevance
 

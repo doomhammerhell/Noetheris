@@ -95,8 +95,6 @@ class QuboModel:
     def validate(self) -> None:
         if len(set(self.variables)) != len(self.variables):
             raise ValueError("QUBO variables must be unique")
-        if len(self.variables) > 24:
-            raise ValueError("local exhaustive QUBO solver is bounded to 24 variables")
         known = set(self.variables)
         for variable, coefficient in self.linear.items():
             if variable not in known:
@@ -133,13 +131,14 @@ class QuboModel:
 
     def to_ising(self) -> IsingModel:
         self.validate()
+        canonical = self.canonicalized()
         fields = {variable: 0.0 for variable in self.variables}
-        offset = self.constant
+        offset = canonical.constant
         couplings: list[IsingCoupling] = []
-        for variable, coefficient in self.linear.items():
+        for variable, coefficient in canonical.linear.items():
             offset += coefficient / 2.0
             fields[variable] -= coefficient / 2.0
-        for term in self.quadratic:
+        for term in canonical.quadratic:
             offset += term.coefficient / 4.0
             fields[term.left] -= term.coefficient / 4.0
             fields[term.right] -= term.coefficient / 4.0
@@ -171,8 +170,47 @@ class QuboModel:
             for variable in self.variables
         }
 
+    def canonicalized(self) -> "QuboModel":
+        self.validate()
+        linear = {variable: 0.0 for variable in self.variables}
+        for variable, coefficient in self.linear.items():
+            linear[variable] += coefficient
+        pair_coefficients: dict[tuple[str, str], float] = {}
+        variable_order = {variable: idx for idx, variable in enumerate(self.variables)}
+        for term in self.quadratic:
+            if term.left == term.right:
+                linear[term.left] += term.coefficient
+                continue
+            left, right = sorted(
+                (term.left, term.right),
+                key=lambda variable: variable_order[variable],
+            )
+            pair_coefficients[(left, right)] = (
+                pair_coefficients.get((left, right), 0.0) + term.coefficient
+            )
+        quadratic = [
+            QuadraticTerm(left, right, coefficient)
+            for (left, right), coefficient in sorted(
+                pair_coefficients.items(),
+                key=lambda item: (variable_order[item[0][0]], variable_order[item[0][1]]),
+            )
+            if coefficient != 0.0
+        ]
+        return QuboModel(
+            variables=list(self.variables),
+            linear={
+                variable: coefficient
+                for variable, coefficient in linear.items()
+                if coefficient != 0.0
+            },
+            quadratic=quadratic,
+            constant=self.constant,
+        )
+
     def exhaustive_solve(self) -> QuboSolution:
         self.validate()
+        if len(self.variables) > 24:
+            raise ValueError("local exhaustive QUBO solver is bounded to 24 variables")
         best: QuboSolution | None = None
         for mask in range(1 << len(self.variables)):
             assignment = {

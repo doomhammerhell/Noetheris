@@ -4,7 +4,17 @@ import numpy as np
 
 from noetheris.cv.displacement import position_displacement
 from noetheris.cv.linalg import normalize_state
-from noetheris.cv.operators import momentum, position
+from noetheris.cv.operators import position
+
+
+def gkp_stabilizer_spacing() -> float:
+    """Return the square-lattice GKP stabilizer spacing for [q, p] = i.
+
+    With q = (a + a^dagger) / sqrt(2) and p = (a - a^dagger)/(i sqrt(2)),
+    the ideal square-lattice code has logical shifts separated by sqrt(pi)
+    and stabilizer translations separated by 2*sqrt(pi).
+    """
+    return 2.0 * np.sqrt(np.pi)
 
 
 def approximate_gkp_zero_state(k: int, delta: float, grid_cutoff: int) -> np.ndarray:
@@ -16,7 +26,7 @@ def approximate_gkp_one_state(k: int, delta: float, grid_cutoff: int) -> np.ndar
 
 
 def gkp_stabilizers(k: int) -> tuple[np.ndarray, np.ndarray]:
-    scale = np.sqrt(2.0 * np.pi)
+    scale = gkp_stabilizer_spacing()
     sx = position_displacement(k, scale)
     sp = _momentum_shift(k, scale)
     return sx, sp

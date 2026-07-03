@@ -10,6 +10,7 @@ cargo clippy --workspace --all-targets -- -D warnings
 "${PYTHON_BIN}" -m compileall python examples benchmarks
 "${PYTHON_BIN}" -m pytest
 bash scripts/run_examples.sh
+"${PYTHON_BIN}" scripts/generate_release_results.py
 bash scripts/run_benchmarks.sh >/tmp/noetheris_benchmarks.json
 if command -v lake >/dev/null 2>&1; then
   (cd formal/lean && lake build)
@@ -47,7 +48,7 @@ hex_terms=(
 )
 pattern="$(for encoded in "${hex_terms[@]}"; do printf '%s\n' "${encoded}" | xxd -r -p; done | paste -sd '|' -)"
 if rg -n -i "${pattern}" \
-  README.md SECURITY.md CONTRIBUTING.md CODE_OF_CONDUCT.md ROADMAP.md CHANGELOG.md \
+  README.md RELEASE_NOTES_v0.1.0.md SECURITY.md CONTRIBUTING.md CODE_OF_CONDUCT.md ROADMAP.md CHANGELOG.md \
   docs python crates examples tests formal scripts benchmarks .github; then
   echo "audit phrase scan failed" >&2
   exit 1

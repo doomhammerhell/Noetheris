@@ -4,7 +4,7 @@ This roadmap tracks Noetheris from the v0.1 Structural Quantum Security Kernel t
 
 ## Phase 1 — v0.1 Structural Quantum Security Kernel
 
-Structural IR, QUBO/Ising lowering, bounded invariant search, PQC migration optimization, circuit-oracle compilation, CV/GKP diagnostics, certificates, CLI, local benchmarks, Lean/TLA kernels, and paper draft.
+Structural IR, QUBO/Ising lowering, bounded invariant search, PQC migration optimization, circuit-oracle compilation, CV/GKP diagnostics, certificates, CLI, local benchmarks, release evidence artifacts, Lean/TLA kernels, and technical note.
 
 Validation target: local release audit passes.
 

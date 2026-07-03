@@ -2,9 +2,9 @@
 
 ## Phase 1 — v0.1 Structural Quantum Security Kernel
 
-Deliver Structural IR, QUBO/Ising lowering, bounded invariant search, PQC migration optimization, circuit-oracle compilation, CV/GKP diagnostics, certificates, CLI, local benchmarks, Lean/TLA kernels, and paper draft.
+Shipped Structural IR, QUBO/Ising lowering, bounded invariant search, PQC migration optimization, circuit-oracle compilation, CV/GKP diagnostics, certificates, CLI, local benchmarks, release evidence artifacts, Lean/TLA kernels, and a technical note.
 
-Validation target: full release audit passes locally.
+Validation target: full release audit passes locally and release evidence regenerates deterministically.
 
 ## Phase 2 — v0.2 Annealing And Embedding Layer
 

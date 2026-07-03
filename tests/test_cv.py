@@ -9,6 +9,7 @@ from noetheris.cv import (
     creation,
     cv_diagnostic_certificate,
     displacement,
+    gkp_stabilizer_spacing,
     logarithmic_negativity,
     momentum,
     negativity,
@@ -48,6 +49,7 @@ def test_gkp_diagnostic_certificate_valid() -> None:
     result = cv_diagnostic_certificate(cutoff=8, delta=0.4, grid_cutoff=1)
     assert result["certificate_status"] == "verified"
     assert 0.0 <= result["diagnostics"]["boundary_population"] <= 1.0
+    assert abs(gkp_stabilizer_spacing() - 2.0 * np.sqrt(np.pi)) < 1e-12
 
 
 def test_partial_transpose_detects_bell_entanglement() -> None:
