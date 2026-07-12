@@ -1,0 +1,148 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{hyperref}
+
+\title{Noetheris: A Local-First Structural Kernel for Quantum-Inspired Security Analysis}
+\author{Mayckon Giovani}
+\date{v0.2 working paper}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Noetheris is a local-first research kernel for representing security-critical
+system structure as executable artifacts: structural intermediate
+representations, QUBO/Ising models, Boolean oracle mappings, certificate
+objects, and small formal-methods kernels. This paper defines the intended
+v0.2 scope: a narrow external solver boundary for Ocean-compatible QUBO
+exchange, Qiskit-compatible oracle export, and deterministic local replay of
+solver candidates. The release does not claim quantum advantage, hardware
+performance, cryptographic compromise, or production security certification.
+\end{abstract}
+
+\section{Problem}
+
+Security failures in distributed and cryptographic infrastructure often arise
+from structural conditions: unsafe state transitions, dependency cycles,
+threshold-policy violations, migration blockers, and inconsistent evidence
+about optimization results. Noetheris models those structures explicitly and
+compiles bounded instances into representations that can be checked locally.
+
+The v0.2 objective is deliberately small. The project should strengthen the
+boundary between a deterministic local kernel and optional external solver
+ecosystems. The central rule is that external solver output is not trusted as a
+result until Noetheris replays the witness locally.
+
+\section{Structural Model}
+
+Let a structural instance be
+\[
+  \mathcal{S} = (V, E, C, I, O, A, M),
+\]
+where $V$ is a typed node set, $E$ is a typed edge set, $C$ is a set of
+constraints, $I$ is a set of invariants, $O$ is a set of objectives, $A$ is a
+set of adversary actions, and $M$ is metadata. Canonical JSON serialization
+defines a deterministic problem hash
+\[
+  h_P = H(\mathrm{canonical}(\mathcal{S})).
+\]
+This hash is the stable identity of the source problem for replay and
+certificate checks.
+
+\section{QUBO And Ising Lowering}
+
+Noetheris compiles bounded structural choices into binary variables
+$x_i \in \{0,1\}$ and an energy function
+\[
+  E_Q(x) = c + \sum_i a_i x_i + \sum_{i<j} b_{ij} x_i x_j.
+\]
+The compiler canonicalizes duplicate, reversed, and self-quadratic terms before
+export. A compiled model hash
+\[
+  h_C = H(\mathrm{canonical}(h_P, E_Q, \mathrm{metadata}))
+\]
+binds the source problem to the emitted optimization model.
+
+The Ising lowering uses the convention $x_i = (1 - z_i)/2$ with
+$z_i \in \{-1,1\}$. Energy equivalence is tested over small instances by
+enumerating assignments.
+
+\section{External Solver Boundary}
+
+For Ocean and D-Wave-oriented workflows, Noetheris emits a structured QUBO
+exchange artifact:
+\[
+  (X, c, L, Q, h_C),
+\]
+where $X$ is the ordered variable list, $c$ is the offset, $L$ is the linear
+term list, $Q$ is the quadratic term list, and $h_C$ is the compiled model
+hash. If Ocean is installed, the exchange can be materialized locally as a
+\texttt{dimod.BinaryQuadraticModel}. This does not require a sampler, token, or
+cloud account.
+
+A solver candidate is a tuple
+\[
+  w = (h_P, h_C, x, \hat{E}, \mu),
+\]
+where $x$ is an assignment, $\hat{E}$ is the reported energy, and $\mu$ is
+solver metadata. Noetheris accepts $w$ only if the hashes match, the assignment
+domain is exact, and
+\[
+  E_Q(x) = \hat{E}
+\]
+within an explicit tolerance. Embedding metadata may be recorded when supplied
+externally, but local Noetheris code does not infer hardware embedding quality.
+
+\section{Circuit Oracle Boundary}
+
+For gate-model workflows, a Boolean predicate $\phi$ over structural variables
+is represented by the reversible oracle
+\[
+  O_\phi |x\rangle |y\rangle = |x\rangle |y \oplus \phi(x)\rangle.
+\]
+The v0.2 boundary focuses on small predicates with exact truth tables,
+symbolic reversible gates, cleanup accounting, QASM-like text, and optional
+local Qiskit circuit summaries. IBM Runtime execution is outside the default
+path.
+
+\section{Certificates}
+
+Certificates bind the problem hash, compiled model hash, witness assignment,
+energy terms, constraints, and replay metadata. The validation policy is
+fail-closed: arithmetic mismatches, hash mismatches, unknown variables, missing
+variables, and status inconsistencies reject the certificate or candidate.
+
+\section{Reproducibility}
+
+The expected local validation path is:
+\[
+\begin{array}{ll}
+\text{audit} & \texttt{bash scripts/run\_audit.sh} \\
+\text{examples} & \texttt{bash scripts/run\_examples.sh} \\
+\text{benchmarks} & \texttt{bash scripts/run\_benchmarks.sh}
+\end{array}
+\]
+Optional packages may enrich reports but must not change the trust boundary.
+
+\section{Limitations}
+
+Noetheris v0.2 remains a research engineering kernel. It does not benchmark
+IBM Quantum or D-Wave hardware, does not claim quantum advantage, does not
+assess deployed cryptography as compromised, and does not provide production
+security certification. The implemented value is narrower: deterministic local
+compilation, explicit solver boundaries, replayable witnesses, and honest
+evidence artifacts.
+
+\section{Conclusion}
+
+The v0.2 release should improve Noetheris by making optional quantum and
+annealing integrations more inspectable without weakening the security model.
+The engineering invariant is simple: export may cross a solver boundary, but
+verification remains local.
+
+\end{document}

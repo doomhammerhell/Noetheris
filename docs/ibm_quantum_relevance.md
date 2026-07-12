@@ -40,6 +40,12 @@ assert payload["credential_required"] is False
 assert payload["truth_table"]["11"] == 1
 ```
 
+For a fuller no-credential threshold-policy oracle report:
+
+```bash
+python3 examples/qiskit_oracle_export.py
+```
+
 ## No Quantum Advantage Claim
 
 Noetheris does not claim that these circuits outperform classical verification. The release provides a precise encoding and replay boundary so that structural predicates can be inspected before any backend-specific research is attempted.

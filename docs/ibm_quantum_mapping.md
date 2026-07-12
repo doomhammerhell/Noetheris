@@ -22,6 +22,14 @@ Dynamic circuits are relevant when verification, branching, or mid-circuit measu
 
 The repository runs locally without IBM Quantum credentials. Optional Qiskit export is skipped when Qiskit is unavailable and does not affect certificate validation. When Qiskit is installed, Noetheris can synthesize a small truth-table oracle into a `QuantumCircuit` summary for review.
 
+The executable local example is:
+
+```bash
+python3 examples/qiskit_oracle_export.py
+```
+
+It emits the exact truth table, symbolic reversible gates, cleanup metrics, QASM-like text, and an optional local Qiskit circuit summary.
+
 ## QAOA Relevance
 
 QAOA is represented locally as ideal statevector evolution over a diagonal cost Hamiltonian and a transverse-field mixer. This is useful for checking the mathematical bridge from security objectives to gate-model optimization workflows. It does not model backend noise, scheduling, transpilation, calibration, or hardware queue behavior.

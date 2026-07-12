@@ -29,8 +29,8 @@ Noetheris does not claim quantum advantage, does not assess deployed cryptograph
 | --- | --- |
 | Structural IR validation and hashing | `tests/test_structural_ir.py`, `examples/structural_ir/*.json`, `docs/results/compiled_qubo_solution.json` |
 | QUBO/Ising energy preservation | `tests/test_qubo.py`, `examples/qubo_ising_qaoa.py`, `docs/results/qaoa_hamiltonian_report.json` |
-| D-Wave/Ocean boundary | `tests/test_optional_integrations.py`, `docs/results/compiled_qubo_solution.json`, `docs/dwave_mapping.md` |
-| IBM/Qiskit oracle boundary | `tests/test_circuits.py`, `tests/test_optional_integrations.py`, `docs/results/oracle_truth_table.json` |
+| D-Wave/Ocean boundary | `tests/test_optional_integrations.py`, `tests/test_external_examples.py`, `examples/dwave_ocean_exchange.py`, `docs/results/compiled_qubo_solution.json`, `docs/dwave_mapping.md` |
+| IBM/Qiskit oracle boundary | `tests/test_circuits.py`, `tests/test_optional_integrations.py`, `tests/test_external_examples.py`, `examples/qiskit_oracle_export.py`, `docs/results/oracle_truth_table.json` |
 | Certificate replay | `tests/test_certificates.py`, `examples/example_energy_certificate.json`, `docs/results/invariant_witness.json` |
 | CV/GKP diagnostics | `tests/test_cv.py`, `examples/cv_gkp_stabilizer_diagnostics.py`, `docs/results/cv_gkp_diagnostic_certificate.json` |
 | Release benchmark baseline | `benchmarks/results/noetheris_v0_1_baseline.json`, `benchmarks/results/noetheris_v0_1_baseline.csv`, `docs/results/benchmark_report.json` |
@@ -80,6 +80,8 @@ python3 examples/consensus_safety_violation.py
 python3 examples/threshold_policy_analysis.py
 python3 examples/certificate_validation.py
 python3 examples/qubo_ising_qaoa.py
+python3 examples/dwave_ocean_exchange.py
+python3 examples/qiskit_oracle_export.py
 python3 examples/saga_failure_semantics.py
 python3 examples/cv_fock_truncation_diagnostics.py
 python3 examples/cv_gkp_stabilizer_diagnostics.py
@@ -88,6 +90,8 @@ python3 examples/cv_entanglement_diagnostics.py
 ```
 
 Structural IR inputs live under `examples/structural_ir/`.
+
+The Ocean and Qiskit examples run without D-Wave or IBM Quantum credentials. If optional packages are installed, they add local object summaries and energy parity checks; they do not perform cloud execution.
 
 ## CLI
 

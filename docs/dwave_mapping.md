@@ -26,6 +26,14 @@ Self-quadratic binary terms are folded into linear terms because `x*x = x` for `
 
 When Ocean is installed, Noetheris also constructs a `dimod.BinaryQuadraticModel` locally. This does not require D-Wave credentials. The BQM summary records variable count, interaction count, vartype, and `to_qubo` offset.
 
+The executable local example is:
+
+```bash
+python3 examples/dwave_ocean_exchange.py
+```
+
+It emits the canonical exchange payload, optional local Ocean parity data, the exact local reference assignment, and a replay result that verifies hashes and energy.
+
 ## Solver Boundary
 
 Exact local solving is capped to small instances. QUBO validation and export are not capped by that exact-solver bound. This separation matters: large models may be valid exchange artifacts even when exhaustive local search is infeasible.

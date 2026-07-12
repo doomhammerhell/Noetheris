@@ -8,11 +8,21 @@ Structural IR, QUBO/Ising lowering, bounded invariant search, PQC migration opti
 
 Validation target: local release audit passes.
 
-## Phase 2 — v0.2 Annealing And Embedding Layer
+## Phase 2 — v0.2 External Solver Boundary
 
-Penalty calibration, decomposition, Ocean-native model export, embedding metadata capture, and replay for external annealing results.
+Small scope: strengthen the local boundary between Noetheris and optional external solver ecosystems without adding hardware dependence.
 
-Validation target: exact, seeded annealing, and exported models agree on small instances.
+Planned deliverables:
+
+- Ocean-compatible QUBO exchange examples with canonical linear and quadratic terms.
+- Optional `dimod.BinaryQuadraticModel` parity checks when Ocean is installed.
+- Qiskit truth-table oracle examples for small Boolean predicates without IBM Runtime credentials.
+- External assignment replay examples that verify problem hashes, compiled model hashes, assignments, and energies locally.
+- Documentation for solver metadata and embedding metadata as evidence supplied by the external solver, not inferred by Noetheris.
+
+Out of scope for v0.2: hardware execution, minor-embedding optimization, cloud solver benchmarking, quantum advantage claims, cryptographic compromise claims, and production security certification.
+
+Validation target: every v0.2 example runs without credentials; optional Ocean/Qiskit packages only enrich the local export report.
 
 ## Phase 3 — v0.3 Gate-Model Oracle Research
 

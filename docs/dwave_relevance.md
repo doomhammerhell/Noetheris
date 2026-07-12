@@ -45,6 +45,12 @@ assert payload["credential_required"] is False
 assert payload["exchange"]["vartype"] == "BINARY"
 ```
 
+For a fuller no-credential exchange and replay report:
+
+```bash
+python3 examples/dwave_ocean_exchange.py
+```
+
 ## Minimal Replay
 
 ```python

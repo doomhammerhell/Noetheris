@@ -6,11 +6,21 @@ Shipped Structural IR, QUBO/Ising lowering, bounded invariant search, PQC migrat
 
 Validation target: full release audit passes locally and release evidence regenerates deterministically.
 
-## Phase 2 — v0.2 Annealing And Embedding Layer
+## Phase 2 — v0.2 External Solver Boundary
 
-Add richer penalty calibration, decomposition, Ocean-native model export, embedding metadata capture, and certificate replay for external annealing results.
+Keep the scope deliberately small. The v0.2 line should make the external solver boundary easier to inspect, replay, and extend without introducing hardware dependence.
 
-Validation target: differential tests across exact, seeded annealing, and exported models.
+Planned deliverables:
+
+- Ocean-compatible QUBO exchange examples with canonical linear and quadratic terms.
+- Optional `dimod.BinaryQuadraticModel` parity checks when Ocean is installed.
+- Qiskit truth-table oracle examples for small Boolean predicates without IBM Runtime credentials.
+- External assignment replay examples that verify problem hashes, compiled model hashes, assignments, and energies locally.
+- Documentation for solver metadata and embedding metadata as external evidence, not local inference.
+
+Out of scope for v0.2: hardware execution, minor-embedding optimization, cloud solver benchmarking, quantum advantage claims, cryptographic compromise claims, and production security certification.
+
+Validation target: every v0.2 example runs without credentials; optional Ocean/Qiskit packages only enrich the local export report.
 
 ## Phase 3 — v0.3 Gate-Model Oracle Research
 
