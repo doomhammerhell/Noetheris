@@ -44,7 +44,9 @@ The v0.2 parity harness checks:
 
 These values must agree for every assignment of each small parity fixture. Larger export-only models are validated and serialized without invoking the bounded exhaustive solver.
 
-When Ocean is installed, Noetheris also constructs a `dimod.BinaryQuadraticModel` locally. This does not require D-Wave credentials. The BQM summary records variable count, interaction count, vartype, and `to_qubo` offset.
+When Ocean is installed, Noetheris also constructs a `dimod.BinaryQuadraticModel` locally. This does not require D-Wave credentials. The BQM report records vartype, variable count, interaction count, offset, `to_qubo` offset, checked assignments, Noetheris energy, Ocean energy, and agreement status.
+
+If Ocean is absent, the report states that `dimod` is unavailable and leaves BQM data empty. This is a supported default path, not a degraded verification path: Noetheris replay and certificate checks remain local.
 
 The executable local example is:
 
@@ -52,7 +54,7 @@ The executable local example is:
 python3 examples/dwave_ocean_exchange.py
 ```
 
-It emits the canonical exchange payload, optional local Ocean parity data, the exact local reference assignment, and a replay result that verifies hashes and energy.
+It emits the canonical exchange payload, optional local Ocean BQM parity data, the exact local reference assignment, and a replay result that verifies hashes and energy.
 
 ## Solver Boundary
 
