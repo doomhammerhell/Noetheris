@@ -24,6 +24,26 @@ The D-Wave/Ocean boundary exports a structured BINARY QUBO payload:
 
 Self-quadratic binary terms are folded into linear terms because `x*x = x` for `x in {0,1}`. Duplicate and reversed pairs are aggregated before export. This preserves the internal energy surface while producing a deterministic exchange artifact.
 
+The exchange payload has the same assignment domain as the source model. For any complete assignment `x`, the replay energy is:
+
+```text
+E_exchange(x) =
+  offset
+  + sum(linear_terms[i].coefficient where x[linear_terms[i].variable] = 1)
+  + sum(quadratic_terms[j].coefficient
+        where x[quadratic_terms[j].left] = 1
+          and x[quadratic_terms[j].right] = 1).
+```
+
+The v0.2 parity harness checks:
+
+- original `QuboModel.evaluate(x)`;
+- canonicalized `QuboModel.evaluate(x)`;
+- structured exchange-payload evaluation;
+- optional Ocean `dimod.BinaryQuadraticModel.energy(x)` when Ocean is installed.
+
+These values must agree for every assignment of each small parity fixture. Larger export-only models are validated and serialized without invoking the bounded exhaustive solver.
+
 When Ocean is installed, Noetheris also constructs a `dimod.BinaryQuadraticModel` locally. This does not require D-Wave credentials. The BQM summary records variable count, interaction count, vartype, and `to_qubo` offset.
 
 The executable local example is:
