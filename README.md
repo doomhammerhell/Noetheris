@@ -51,7 +51,7 @@ python3 -m pip install -e '.[qiskit]'
 python3 -m pip install -e '.[dwave]'
 ```
 
-The default path requires no paid APIs, no IBM Quantum credentials, and no D-Wave credentials.
+The default path requires no paid APIs, no IBM Quantum credentials, and no D-Wave credentials. Installing `.[dwave]` enables local `dimod.BinaryQuadraticModel` construction and energy parity reports; it does not submit to D-Wave cloud services.
 
 ## Tests And Audit
 
