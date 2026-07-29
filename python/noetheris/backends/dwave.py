@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Mapping
 
 from noetheris.certificates import stable_problem_hash
 from noetheris.qubo import QuboModel
@@ -16,38 +16,14 @@ def dwave_status() -> dict[str, Any]:
 
 def export_qubo_to_dwave(model: QuboModel) -> dict[str, Any]:
     model.validate()
-    canonical = model.canonicalized()
     status = dwave_status()
     payload = qubo_exchange_payload(model)
-    bqm_summary: dict[str, Any] | None = None
-    if status["available"]:
-        try:
-            import dimod  # type: ignore
-
-            bqm = dimod.BinaryQuadraticModel(
-                dict(canonical.linear),
-                {(term.left, term.right): term.coefficient for term in canonical.quadratic},
-                canonical.constant,
-                dimod.BINARY,
-            )
-            qubo, offset = bqm.to_qubo()
-            bqm_summary = {
-                "class": "dimod.BinaryQuadraticModel",
-                "vartype": str(bqm.vartype),
-                "num_variables": len(bqm.variables),
-                "num_interactions": len(bqm.quadratic),
-                "to_qubo_terms": len(qubo),
-                "to_qubo_offset": float(offset),
-            }
-        except Exception as exc:
-            bqm_summary = {
-                "class": "dimod.BinaryQuadraticModel",
-                "export_error": exc.__class__.__name__,
-            }
+    bqm_report = ocean_bqm_parity_report(model, assignments=())
     return {
         "status": status,
         "exchange": payload,
-        "bqm_summary": bqm_summary,
+        "bqm_summary": bqm_report["bqm_summary"],
+        "ocean_bqm_report": bqm_report,
         "credential_required": False,
         "external_solver_policy": "solver samples are untrusted until local energy replay succeeds",
     }
@@ -79,6 +55,96 @@ def qubo_exchange_payload(model: QuboModel) -> dict[str, Any]:
         },
     }
     return {**payload, "model_hash": stable_problem_hash(payload)}
+
+
+def ocean_bqm_parity_report(
+    model: QuboModel,
+    *,
+    assignments: tuple[Mapping[str, bool | int], ...],
+) -> dict[str, Any]:
+    model.validate()
+    try:
+        import dimod  # type: ignore
+    except Exception as exc:
+        return {
+            "available": False,
+            "reason": exc.__class__.__name__,
+            "credential_required": False,
+            "bqm_summary": None,
+            "assignment_reports": [],
+            "energy_agreement": None,
+            "policy": "Ocean is optional; missing dimod does not affect local Noetheris replay",
+        }
+
+    canonical = model.canonicalized()
+    try:
+        linear_biases = {
+            variable: canonical.linear.get(variable, 0.0)
+            for variable in canonical.variables
+        }
+        bqm = dimod.BinaryQuadraticModel(
+            linear_biases,
+            {(term.left, term.right): term.coefficient for term in canonical.quadratic},
+            canonical.constant,
+            dimod.BINARY,
+        )
+        qubo, offset = bqm.to_qubo()
+        bqm_summary = {
+            "class": "dimod.BinaryQuadraticModel",
+            "vartype": str(bqm.vartype),
+            "num_variables": len(bqm.variables),
+            "num_interactions": len(bqm.quadratic),
+            "offset": float(getattr(bqm, "offset", canonical.constant)),
+            "to_qubo_terms": len(qubo),
+            "to_qubo_offset": float(offset),
+        }
+        assignment_reports = [
+            _ocean_assignment_report(model, bqm, assignment)
+            for assignment in assignments
+        ]
+    except Exception as exc:
+        return {
+            "available": True,
+            "credential_required": False,
+            "bqm_summary": {
+                "class": "dimod.BinaryQuadraticModel",
+                "export_error": exc.__class__.__name__,
+            },
+            "assignment_reports": [],
+            "energy_agreement": False,
+            "policy": "local BQM construction failed before any external solver boundary",
+        }
+    return {
+        "available": True,
+        "credential_required": False,
+        "bqm_summary": bqm_summary,
+        "assignment_reports": assignment_reports,
+        "energy_agreement": (
+            all(item["agreement"] for item in assignment_reports)
+            if assignment_reports
+            else None
+        ),
+        "policy": "local dimod BQM construction only; no D-Wave credentials or sampler calls",
+    }
+
+
+def _ocean_assignment_report(
+    model: QuboModel, bqm: Any, assignment: Mapping[str, bool | int]
+) -> dict[str, Any]:
+    normalized = {variable: bool(value) for variable, value in assignment.items()}
+    noetheris_energy = model.evaluate(normalized)
+    ocean_assignment = {
+        variable: int(normalized[variable]) for variable in model.variables
+    }
+    ocean_energy = float(bqm.energy(ocean_assignment))
+    difference = ocean_energy - noetheris_energy
+    return {
+        "assignment": {variable: normalized[variable] for variable in model.variables},
+        "noetheris_energy": noetheris_energy,
+        "ocean_energy": ocean_energy,
+        "difference": difference,
+        "agreement": abs(difference) <= 1e-9,
+    }
 
 
 def replay_external_sample(

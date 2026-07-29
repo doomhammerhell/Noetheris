@@ -32,9 +32,13 @@ def test_dwave_ocean_exchange_example_replays_locally() -> None:
     assert payload["replay"]["status"] == "verified"
     assert payload["replay"]["energy_recomputed"] is True
     assert payload["local_solution"]["energy"] == payload["replay"]["energy"]
-    ocean_check = payload["ocean_energy_check"]
-    if ocean_check["available"]:
-        assert ocean_check["energy"] == payload["local_solution"]["energy"]
+    ocean_report = payload["ocean_bqm_report"]
+    assert ocean_report["credential_required"] is False
+    if ocean_report["available"]:
+        assert ocean_report["energy_agreement"] is True
+        assert ocean_report["assignment_reports"][0]["ocean_energy"] == payload["local_solution"]["energy"]
+    else:
+        assert ocean_report["bqm_summary"] is None
 
 
 def test_qiskit_oracle_export_example_has_exact_local_semantics() -> None:

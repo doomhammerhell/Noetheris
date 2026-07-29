@@ -3,43 +3,13 @@ from __future__ import annotations
 import json
 from pathlib import Path
 import sys
-from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "python"))
 
-from noetheris.backends import export_qubo_to_dwave
+from noetheris.backends import export_qubo_to_dwave, ocean_bqm_parity_report
 from noetheris.ir import StructuralSystem
 from noetheris.qubo import compile_system, replay_external_solution, solve_exact
-
-
-def _ocean_energy_check(exchange: dict[str, Any], assignment: dict[str, bool]) -> dict[str, Any]:
-    try:
-        import dimod  # type: ignore
-    except Exception as exc:
-        return {"available": False, "reason": exc.__class__.__name__}
-
-    bqm = dimod.BinaryQuadraticModel(
-        {
-            item["variable"]: float(item["coefficient"])
-            for item in exchange["linear_terms"]
-        },
-        {
-            (item["left"], item["right"]): float(item["coefficient"])
-            for item in exchange["quadratic_terms"]
-        },
-        float(exchange["offset"]),
-        dimod.BINARY,
-    )
-    ocean_assignment = {variable: int(value) for variable, value in assignment.items()}
-    return {
-        "available": True,
-        "bqm_class": "dimod.BinaryQuadraticModel",
-        "vartype": str(bqm.vartype),
-        "num_variables": len(bqm.variables),
-        "num_interactions": len(bqm.quadratic),
-        "energy": float(bqm.energy(ocean_assignment)),
-    }
 
 
 def main() -> None:
@@ -65,7 +35,10 @@ def main() -> None:
             "embedding": None,
         },
     )
-    ocean_check = _ocean_energy_check(exported["exchange"], solution.assignment)
+    ocean_bqm_report = ocean_bqm_parity_report(
+        compiled.model,
+        assignments=(solution.assignment,),
+    )
     print(
         json.dumps(
             {
@@ -76,7 +49,7 @@ def main() -> None:
                 "exchange": exported["exchange"],
                 "dwave_status": exported["status"],
                 "bqm_summary": exported["bqm_summary"],
-                "ocean_energy_check": ocean_check,
+                "ocean_bqm_report": ocean_bqm_report,
                 "local_solution": {
                     "assignment": solution.assignment,
                     "energy": solution.energy,
