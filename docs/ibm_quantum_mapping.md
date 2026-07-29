@@ -22,13 +22,22 @@ Dynamic circuits are relevant when verification, branching, or mid-circuit measu
 
 The repository runs locally without IBM Quantum credentials. Optional Qiskit export is skipped when Qiskit is unavailable and does not affect certificate validation. When Qiskit is installed, Noetheris can synthesize a small truth-table oracle into a `QuantumCircuit` summary for review.
 
+The v0.2 semantic report compares:
+
+- direct `BoolExpr.evaluate` truth-table evaluation;
+- symbolic oracle truth-table evaluation;
+- reversible cleanup checks;
+- optional Qiskit circuit summary metadata when `qiskit` is installed.
+
+The Qiskit summary is synthesized from the verified local truth table. Noetheris does not treat it as backend execution and does not use it as evidence of hardware behavior.
+
 The executable local example is:
 
 ```bash
 python3 examples/qiskit_oracle_export.py
 ```
 
-It emits the exact truth table, symbolic reversible gates, cleanup metrics, QASM-like text, and an optional local Qiskit circuit summary.
+It emits the exact truth table, symbolic reversible gates, cleanup metrics, QASM-like text, semantic checks, and an optional local Qiskit circuit summary.
 
 ## QAOA Relevance
 
