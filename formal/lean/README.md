@@ -12,6 +12,9 @@ Included modules:
 - `QuboEnergy.lean`: binary assignments and QUBO energy evaluation.
 - `MigrationPolicy.lean`: simple policy predicates for asset migration choices.
 - `CircuitOracle.lean`: finite truth-table semantics for Boolean oracle evaluation.
+- `ReplayBoundary.lean`: simplified replay acceptance over hashes, assignment completeness, metadata well-formedness, and reported/recomputed energy equality.
+
+`ReplayBoundary.lean` is a small formal kernel for the external-candidate replay boundary. It proves local lemmas about the simplified predicate only; it is not an end-to-end proof of the Python or Rust implementation.
 
 Build with:
 
