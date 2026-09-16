@@ -4,6 +4,7 @@ from noetheris.qubo import (
     CompiledProblem,
     QuadraticTerm,
     QuboModel,
+    external_solver_replay_artifact,
     replay_external_solution,
 )
 
@@ -109,3 +110,77 @@ def test_external_solution_replay_fails_closed() -> None:
     assert replay_external_solution(compiled, {"x": True}, problem_hash="bad")["status"] == "rejected"
     assert replay_external_solution(compiled, {}, reported_energy=0.0)["status"] == "rejected"
     assert replay_external_solution(compiled, {"x": True, "y": True}, reported_energy=-1.0)["status"] == "rejected"
+
+
+def test_external_replay_artifact_records_explicit_rejection_codes() -> None:
+    model = QuboModel(variables=["x", "y"], linear={"x": -1.0, "y": 2.0})
+    compiled = CompiledProblem(
+        problem_type="unit",
+        problem_hash="sha256:problem",
+        compiled_model_hash="sha256:compiled",
+        model=model,
+        variable_metadata={"x": "unit", "y": "unit"},
+    )
+    accepted = external_solver_replay_artifact(
+        compiled,
+        {"x": 1, "y": 0},
+        reported_energy=-1.0,
+        problem_hash="sha256:problem",
+        compiled_model_hash="sha256:compiled",
+        solver_metadata={"solver": "local_reference"},
+    )
+    assert accepted["schema"] == "noetheris.external_solver_replay.v1"
+    assert accepted["status"] == "verified"
+    assert accepted["artifact_hash"].startswith("sha256:")
+    assert accepted["assignment_domain"]["missing_variables"] == []
+    assert accepted["assignment_domain"]["unknown_variables"] == []
+    assert accepted["recomputed_energy"] == -1.0
+
+    rejected_cases = {
+        "problem_hash_mismatch": external_solver_replay_artifact(
+            compiled,
+            {"x": True, "y": False},
+            reported_energy=-1.0,
+            problem_hash="sha256:wrong",
+            compiled_model_hash="sha256:compiled",
+        ),
+        "compiled_model_hash_mismatch": external_solver_replay_artifact(
+            compiled,
+            {"x": True, "y": False},
+            reported_energy=-1.0,
+            problem_hash="sha256:problem",
+            compiled_model_hash="sha256:wrong",
+        ),
+        "assignment_missing_variables": external_solver_replay_artifact(
+            compiled,
+            {"x": True},
+            reported_energy=-1.0,
+        ),
+        "assignment_unknown_variables": external_solver_replay_artifact(
+            compiled,
+            {"x": True, "y": False, "z": True},
+            reported_energy=-1.0,
+        ),
+        "reported_energy_mismatch": external_solver_replay_artifact(
+            compiled,
+            {"x": True, "y": False},
+            reported_energy=3.0,
+        ),
+        "solver_metadata_malformed": external_solver_replay_artifact(
+            compiled,
+            {"x": True, "y": False},
+            reported_energy=-1.0,
+            solver_metadata="not-a-mapping",  # type: ignore[arg-type]
+        ),
+        "embedding_metadata_malformed": external_solver_replay_artifact(
+            compiled,
+            {"x": True, "y": False},
+            reported_energy=-1.0,
+            embedding_metadata="not-a-mapping",  # type: ignore[arg-type]
+        ),
+    }
+    for expected_code, artifact in rejected_cases.items():
+        assert artifact["status"] == "rejected"
+        assert expected_code in {
+            reason["code"] for reason in artifact["rejection_reasons"]
+        }

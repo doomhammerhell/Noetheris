@@ -27,7 +27,7 @@ Certificates include:
 
 ## Validation
 
-Validation recomputes energy contributions, recomputes total energy, checks constraint polarity, rejects violated constraints for accepted certificates, checks optional problem hash, checks status consistency, and rejects nondeterministic timestamp strategies.
+Validation recomputes energy contributions, recomputes total energy, checks constraint polarity, rejects violated constraints for accepted certificates, checks optional problem hash, checks status consistency, rejects nondeterministic timestamp strategies, and rejects inconsistent external replay evidence embedded in the energy breakdown.
 
 ## Replay
 
@@ -37,6 +37,8 @@ python3 -m noetheris.certificates.replay examples/example_energy_certificate.jso
 ```
 
 Replay emits validation status and certificate fingerprint. Stronger model-specific replay is represented by compiled model hashes and strict QUBO energy evaluation in the compiler layer.
+
+When a certificate includes `external_replay_artifact`, `external_replay`, `external_sample_replay`, or `external_solver_replay` in `energy_breakdown`, that artifact must use schema `noetheris.external_solver_replay.v1`, have `status: "verified"`, have local energy recomputation enabled, match the certificate problem hash, match the certificate compiled-model hash when present, carry no rejection reasons, and pass artifact-hash verification. Any violation rejects the certificate.
 
 ## Formal Surface
 

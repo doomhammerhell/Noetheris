@@ -69,7 +69,17 @@ External solver samples are treated as untrusted witnesses. Replay must check:
 - solver metadata;
 - embedding metadata when a hardware or hybrid run supplies it.
 
+The replay artifact schema is `noetheris.external_solver_replay.v1`. It records the candidate id, submitted and expected hashes, BINARY assignment domain, missing or unknown variables, reported energy, recomputed local energy, energy difference, tolerance, solver metadata, embedding metadata, rejection reasons, and an artifact hash. Accepted candidates have `status: "verified"` and an empty rejection list. Rejected candidates carry structured reason codes such as `problem_hash_mismatch`, `compiled_model_hash_mismatch`, `assignment_missing_variables`, `assignment_unknown_variables`, `reported_energy_mismatch`, `solver_metadata_malformed`, and `embedding_metadata_malformed`.
+
 Local baselines use `embedding_status: "not_requested"` and `embedding: null`. Hardware embedding, chain strength, anneal parameters, chain-break fraction, solver topology, and sample provenance must come from an actual external run and are never inferred by Noetheris.
+
+The deterministic replay example is:
+
+```bash
+python3 examples/external_solver_replay.py
+```
+
+It emits one accepted candidate and multiple rejected candidates. The local replay artifact is the verification authority; solver metadata is recorded evidence supplied by the external tool, not a Noetheris assessment of embedding quality.
 
 ## No Hardware Claim
 

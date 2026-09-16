@@ -1,0 +1,514 @@
+{
+  "accepted_candidate": {
+    "artifact_hash": "sha256:a150fed4fcc7d4bfcb798342c247a13ab8c11d4ad7bc5545f31921d6216ed146",
+    "assignment": {
+      "path_0": false,
+      "path_1": false,
+      "path_2": false,
+      "path_3": false,
+      "path_4": true
+    },
+    "assignment_domain": {
+      "expected_variables": [
+        "path_0",
+        "path_1",
+        "path_2",
+        "path_3",
+        "path_4"
+      ],
+      "invalid_value_variables": [],
+      "missing_variables": [],
+      "provided_variables": [
+        "path_0",
+        "path_1",
+        "path_2",
+        "path_3",
+        "path_4"
+      ],
+      "unknown_variables": [],
+      "vartype": "BINARY"
+    },
+    "candidate_id": "accepted-local-reference",
+    "compiled_model_hash": "sha256:eca1158e2ddfdfe196775a49b8ffbcd46a23a33bf61e18e8229dcda0174612d2",
+    "embedding_metadata": {
+      "embedding": null,
+      "embedding_status": "not_requested"
+    },
+    "energy": 10.0,
+    "energy_difference": 0.0,
+    "energy_recomputed": true,
+    "problem_hash": "sha256:3cddd03a5881f3b71ba61c3b063f96ec47dba9f9160a634392929eca618d095f",
+    "reasons": [],
+    "recomputed_energy": 10.0,
+    "rejection_reasons": [],
+    "reported_energy": 10.0,
+    "schema": "noetheris.external_solver_replay.v1",
+    "solver_boundary": "external solver output is an untrusted witness until deterministic local replay verifies hashes, domain, and energy",
+    "solver_metadata": {
+      "credential_required": false,
+      "sample_source": "release_evidence",
+      "solver": "local_exact_reference"
+    },
+    "status": "verified",
+    "submitted_compiled_model_hash": "sha256:eca1158e2ddfdfe196775a49b8ffbcd46a23a33bf61e18e8229dcda0174612d2",
+    "submitted_problem_hash": "sha256:3cddd03a5881f3b71ba61c3b063f96ec47dba9f9160a634392929eca618d095f",
+    "tolerance": 1e-09,
+    "verification_authority": "noetheris.local_replay"
+  },
+  "credential_required": false,
+  "rejected_candidates": [
+    {
+      "artifact": {
+        "artifact_hash": "sha256:6ee9ffc3ae4c9ac52aa1e05831420e30aa1849621915e5769d77ad0f494f3139",
+        "assignment": {
+          "path_0": false,
+          "path_1": false,
+          "path_2": false,
+          "path_3": false,
+          "path_4": true
+        },
+        "assignment_domain": {
+          "expected_variables": [
+            "path_0",
+            "path_1",
+            "path_2",
+            "path_3",
+            "path_4"
+          ],
+          "invalid_value_variables": [],
+          "missing_variables": [],
+          "provided_variables": [
+            "path_0",
+            "path_1",
+            "path_2",
+            "path_3",
+            "path_4"
+          ],
+          "unknown_variables": [],
+          "vartype": "BINARY"
+        },
+        "candidate_id": "rejected-problem-hash",
+        "compiled_model_hash": "sha256:eca1158e2ddfdfe196775a49b8ffbcd46a23a33bf61e18e8229dcda0174612d2",
+        "embedding_metadata": {
+          "embedding": null,
+          "embedding_status": "not_requested"
+        },
+        "energy": 10.0,
+        "energy_difference": 0.0,
+        "energy_recomputed": true,
+        "problem_hash": "sha256:3cddd03a5881f3b71ba61c3b063f96ec47dba9f9160a634392929eca618d095f",
+        "reasons": [
+          "submitted problem hash does not match compiled problem hash"
+        ],
+        "recomputed_energy": 10.0,
+        "rejection_reasons": [
+          {
+            "code": "problem_hash_mismatch",
+            "detail": "submitted problem hash does not match compiled problem hash",
+            "evidence": {
+              "expected": "sha256:3cddd03a5881f3b71ba61c3b063f96ec47dba9f9160a634392929eca618d095f",
+              "submitted": "sha256:wrong-problem"
+            }
+          }
+        ],
+        "reported_energy": 10.0,
+        "schema": "noetheris.external_solver_replay.v1",
+        "solver_boundary": "external solver output is an untrusted witness until deterministic local replay verifies hashes, domain, and energy",
+        "solver_metadata": {
+          "source": "not_supplied"
+        },
+        "status": "rejected",
+        "submitted_compiled_model_hash": "sha256:eca1158e2ddfdfe196775a49b8ffbcd46a23a33bf61e18e8229dcda0174612d2",
+        "submitted_problem_hash": "sha256:wrong-problem",
+        "tolerance": 1e-09,
+        "verification_authority": "noetheris.local_replay"
+      },
+      "case": "problem_hash_mismatch",
+      "reason_codes": [
+        "problem_hash_mismatch"
+      ],
+      "status": "rejected"
+    },
+    {
+      "artifact": {
+        "artifact_hash": "sha256:b857656935896ec8fa0ca6fe9b79841beb8a3bcd9bcf7002c09a061d62806745",
+        "assignment": {
+          "path_0": false,
+          "path_1": false,
+          "path_2": false,
+          "path_3": false,
+          "path_4": true
+        },
+        "assignment_domain": {
+          "expected_variables": [
+            "path_0",
+            "path_1",
+            "path_2",
+            "path_3",
+            "path_4"
+          ],
+          "invalid_value_variables": [],
+          "missing_variables": [],
+          "provided_variables": [
+            "path_0",
+            "path_1",
+            "path_2",
+            "path_3",
+            "path_4"
+          ],
+          "unknown_variables": [],
+          "vartype": "BINARY"
+        },
+        "candidate_id": "rejected-compiled-model-hash",
+        "compiled_model_hash": "sha256:eca1158e2ddfdfe196775a49b8ffbcd46a23a33bf61e18e8229dcda0174612d2",
+        "embedding_metadata": {
+          "embedding": null,
+          "embedding_status": "not_requested"
+        },
+        "energy": 10.0,
+        "energy_difference": 0.0,
+        "energy_recomputed": true,
+        "problem_hash": "sha256:3cddd03a5881f3b71ba61c3b063f96ec47dba9f9160a634392929eca618d095f",
+        "reasons": [
+          "submitted compiled model hash does not match local compiled model hash"
+        ],
+        "recomputed_energy": 10.0,
+        "rejection_reasons": [
+          {
+            "code": "compiled_model_hash_mismatch",
+            "detail": "submitted compiled model hash does not match local compiled model hash",
+            "evidence": {
+              "expected": "sha256:eca1158e2ddfdfe196775a49b8ffbcd46a23a33bf61e18e8229dcda0174612d2",
+              "submitted": "sha256:wrong-compiled-model"
+            }
+          }
+        ],
+        "reported_energy": 10.0,
+        "schema": "noetheris.external_solver_replay.v1",
+        "solver_boundary": "external solver output is an untrusted witness until deterministic local replay verifies hashes, domain, and energy",
+        "solver_metadata": {
+          "source": "not_supplied"
+        },
+        "status": "rejected",
+        "submitted_compiled_model_hash": "sha256:wrong-compiled-model",
+        "submitted_problem_hash": "sha256:3cddd03a5881f3b71ba61c3b063f96ec47dba9f9160a634392929eca618d095f",
+        "tolerance": 1e-09,
+        "verification_authority": "noetheris.local_replay"
+      },
+      "case": "compiled_model_hash_mismatch",
+      "reason_codes": [
+        "compiled_model_hash_mismatch"
+      ],
+      "status": "rejected"
+    },
+    {
+      "artifact": {
+        "artifact_hash": "sha256:e1deb8b6757e13c6fe5a2ee5a9d606e575c2008602cc234ce1f0e838f1f72b03",
+        "assignment": {
+          "path_1": false,
+          "path_2": false,
+          "path_3": false,
+          "path_4": true
+        },
+        "assignment_domain": {
+          "expected_variables": [
+            "path_0",
+            "path_1",
+            "path_2",
+            "path_3",
+            "path_4"
+          ],
+          "invalid_value_variables": [],
+          "missing_variables": [
+            "path_0"
+          ],
+          "provided_variables": [
+            "path_1",
+            "path_2",
+            "path_3",
+            "path_4"
+          ],
+          "unknown_variables": [],
+          "vartype": "BINARY"
+        },
+        "candidate_id": "rejected-missing-variable",
+        "compiled_model_hash": "sha256:eca1158e2ddfdfe196775a49b8ffbcd46a23a33bf61e18e8229dcda0174612d2",
+        "embedding_metadata": {
+          "embedding": null,
+          "embedding_status": "not_requested"
+        },
+        "energy": null,
+        "energy_difference": null,
+        "energy_recomputed": false,
+        "problem_hash": "sha256:3cddd03a5881f3b71ba61c3b063f96ec47dba9f9160a634392929eca618d095f",
+        "reasons": [
+          "candidate assignment does not cover the compiled model domain"
+        ],
+        "recomputed_energy": null,
+        "rejection_reasons": [
+          {
+            "code": "assignment_missing_variables",
+            "detail": "candidate assignment does not cover the compiled model domain",
+            "evidence": {
+              "variables": [
+                "path_0"
+              ]
+            }
+          }
+        ],
+        "reported_energy": 10.0,
+        "schema": "noetheris.external_solver_replay.v1",
+        "solver_boundary": "external solver output is an untrusted witness until deterministic local replay verifies hashes, domain, and energy",
+        "solver_metadata": {
+          "source": "not_supplied"
+        },
+        "status": "rejected",
+        "submitted_compiled_model_hash": "sha256:eca1158e2ddfdfe196775a49b8ffbcd46a23a33bf61e18e8229dcda0174612d2",
+        "submitted_problem_hash": "sha256:3cddd03a5881f3b71ba61c3b063f96ec47dba9f9160a634392929eca618d095f",
+        "tolerance": 1e-09,
+        "verification_authority": "noetheris.local_replay"
+      },
+      "case": "missing_variables",
+      "reason_codes": [
+        "assignment_missing_variables"
+      ],
+      "status": "rejected"
+    },
+    {
+      "artifact": {
+        "artifact_hash": "sha256:19b042d758bf48263f49968488b31e5e3e6c6e64084070e8e04b3d900ce7952d",
+        "assignment": {
+          "outside_compiled_domain": true,
+          "path_0": false,
+          "path_1": false,
+          "path_2": false,
+          "path_3": false,
+          "path_4": true
+        },
+        "assignment_domain": {
+          "expected_variables": [
+            "path_0",
+            "path_1",
+            "path_2",
+            "path_3",
+            "path_4"
+          ],
+          "invalid_value_variables": [],
+          "missing_variables": [],
+          "provided_variables": [
+            "outside_compiled_domain",
+            "path_0",
+            "path_1",
+            "path_2",
+            "path_3",
+            "path_4"
+          ],
+          "unknown_variables": [
+            "outside_compiled_domain"
+          ],
+          "vartype": "BINARY"
+        },
+        "candidate_id": "rejected-unknown-variable",
+        "compiled_model_hash": "sha256:eca1158e2ddfdfe196775a49b8ffbcd46a23a33bf61e18e8229dcda0174612d2",
+        "embedding_metadata": {
+          "embedding": null,
+          "embedding_status": "not_requested"
+        },
+        "energy": null,
+        "energy_difference": null,
+        "energy_recomputed": false,
+        "problem_hash": "sha256:3cddd03a5881f3b71ba61c3b063f96ec47dba9f9160a634392929eca618d095f",
+        "reasons": [
+          "candidate assignment contains variables outside the compiled model domain"
+        ],
+        "recomputed_energy": null,
+        "rejection_reasons": [
+          {
+            "code": "assignment_unknown_variables",
+            "detail": "candidate assignment contains variables outside the compiled model domain",
+            "evidence": {
+              "variables": [
+                "outside_compiled_domain"
+              ]
+            }
+          }
+        ],
+        "reported_energy": 10.0,
+        "schema": "noetheris.external_solver_replay.v1",
+        "solver_boundary": "external solver output is an untrusted witness until deterministic local replay verifies hashes, domain, and energy",
+        "solver_metadata": {
+          "source": "not_supplied"
+        },
+        "status": "rejected",
+        "submitted_compiled_model_hash": "sha256:eca1158e2ddfdfe196775a49b8ffbcd46a23a33bf61e18e8229dcda0174612d2",
+        "submitted_problem_hash": "sha256:3cddd03a5881f3b71ba61c3b063f96ec47dba9f9160a634392929eca618d095f",
+        "tolerance": 1e-09,
+        "verification_authority": "noetheris.local_replay"
+      },
+      "case": "unknown_variables",
+      "reason_codes": [
+        "assignment_unknown_variables"
+      ],
+      "status": "rejected"
+    },
+    {
+      "artifact": {
+        "artifact_hash": "sha256:46ca4d4a54ac905369c6982510846e73ae4ea3ae7c2d1b91680cbd70966f74fd",
+        "assignment": {
+          "path_0": false,
+          "path_1": false,
+          "path_2": false,
+          "path_3": false,
+          "path_4": true
+        },
+        "assignment_domain": {
+          "expected_variables": [
+            "path_0",
+            "path_1",
+            "path_2",
+            "path_3",
+            "path_4"
+          ],
+          "invalid_value_variables": [],
+          "missing_variables": [],
+          "provided_variables": [
+            "path_0",
+            "path_1",
+            "path_2",
+            "path_3",
+            "path_4"
+          ],
+          "unknown_variables": [],
+          "vartype": "BINARY"
+        },
+        "candidate_id": "rejected-energy-mismatch",
+        "compiled_model_hash": "sha256:eca1158e2ddfdfe196775a49b8ffbcd46a23a33bf61e18e8229dcda0174612d2",
+        "embedding_metadata": {
+          "embedding": null,
+          "embedding_status": "not_requested"
+        },
+        "energy": 10.0,
+        "energy_difference": 1.0,
+        "energy_recomputed": true,
+        "problem_hash": "sha256:3cddd03a5881f3b71ba61c3b063f96ec47dba9f9160a634392929eca618d095f",
+        "reasons": [
+          "reported energy does not match deterministic local replay energy"
+        ],
+        "recomputed_energy": 10.0,
+        "rejection_reasons": [
+          {
+            "code": "reported_energy_mismatch",
+            "detail": "reported energy does not match deterministic local replay energy",
+            "evidence": {
+              "difference": 1.0,
+              "recomputed_energy": 10.0,
+              "reported_energy": 11.0,
+              "tolerance": 1e-09
+            }
+          }
+        ],
+        "reported_energy": 11.0,
+        "schema": "noetheris.external_solver_replay.v1",
+        "solver_boundary": "external solver output is an untrusted witness until deterministic local replay verifies hashes, domain, and energy",
+        "solver_metadata": {
+          "source": "not_supplied"
+        },
+        "status": "rejected",
+        "submitted_compiled_model_hash": "sha256:eca1158e2ddfdfe196775a49b8ffbcd46a23a33bf61e18e8229dcda0174612d2",
+        "submitted_problem_hash": "sha256:3cddd03a5881f3b71ba61c3b063f96ec47dba9f9160a634392929eca618d095f",
+        "tolerance": 1e-09,
+        "verification_authority": "noetheris.local_replay"
+      },
+      "case": "energy_mismatch",
+      "reason_codes": [
+        "reported_energy_mismatch"
+      ],
+      "status": "rejected"
+    },
+    {
+      "artifact": {
+        "artifact_hash": "sha256:580c8edbb75ab04fda360a534dfbb575b7628a67348864bcde08e5d713e76b05",
+        "assignment": {
+          "path_0": false,
+          "path_1": false,
+          "path_2": false,
+          "path_3": false,
+          "path_4": true
+        },
+        "assignment_domain": {
+          "expected_variables": [
+            "path_0",
+            "path_1",
+            "path_2",
+            "path_3",
+            "path_4"
+          ],
+          "invalid_value_variables": [],
+          "missing_variables": [],
+          "provided_variables": [
+            "path_0",
+            "path_1",
+            "path_2",
+            "path_3",
+            "path_4"
+          ],
+          "unknown_variables": [],
+          "vartype": "BINARY"
+        },
+        "candidate_id": "rejected-malformed-metadata",
+        "compiled_model_hash": "sha256:eca1158e2ddfdfe196775a49b8ffbcd46a23a33bf61e18e8229dcda0174612d2",
+        "embedding_metadata": {
+          "accepted": false,
+          "provided": true,
+          "submitted_type": "str"
+        },
+        "energy": 10.0,
+        "energy_difference": 0.0,
+        "energy_recomputed": true,
+        "problem_hash": "sha256:3cddd03a5881f3b71ba61c3b063f96ec47dba9f9160a634392929eca618d095f",
+        "reasons": [
+          "solver metadata must be a JSON-compatible mapping",
+          "embedding metadata must be a JSON-compatible mapping"
+        ],
+        "recomputed_energy": 10.0,
+        "rejection_reasons": [
+          {
+            "code": "solver_metadata_malformed",
+            "detail": "solver metadata must be a JSON-compatible mapping",
+            "evidence": {
+              "submitted_type": "str"
+            }
+          },
+          {
+            "code": "embedding_metadata_malformed",
+            "detail": "embedding metadata must be a JSON-compatible mapping",
+            "evidence": {
+              "submitted_type": "str"
+            }
+          }
+        ],
+        "reported_energy": 10.0,
+        "schema": "noetheris.external_solver_replay.v1",
+        "solver_boundary": "external solver output is an untrusted witness until deterministic local replay verifies hashes, domain, and energy",
+        "solver_metadata": {
+          "accepted": false,
+          "provided": true,
+          "submitted_type": "str"
+        },
+        "status": "rejected",
+        "submitted_compiled_model_hash": "sha256:eca1158e2ddfdfe196775a49b8ffbcd46a23a33bf61e18e8229dcda0174612d2",
+        "submitted_problem_hash": "sha256:3cddd03a5881f3b71ba61c3b063f96ec47dba9f9160a634392929eca618d095f",
+        "tolerance": 1e-09,
+        "verification_authority": "noetheris.local_replay"
+      },
+      "case": "malformed_metadata",
+      "reason_codes": [
+        "solver_metadata_malformed",
+        "embedding_metadata_malformed"
+      ],
+      "status": "rejected"
+    }
+  ],
+  "schema": "noetheris.external_solver_replay.examples.v1",
+  "verification_authority": "noetheris.local_replay"
+}

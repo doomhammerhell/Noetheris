@@ -255,6 +255,7 @@
     }
   },
   "external_sample_replay": {
+    "artifact_hash": "sha256:d1888865d53521446dd39af85d8820ba966ce263e239c921edeeea4911dbecd8",
     "assignment": {
       "path_0": false,
       "path_1": false,
@@ -262,21 +263,50 @@
       "path_3": false,
       "path_4": true
     },
+    "assignment_domain": {
+      "expected_variables": [
+        "path_0",
+        "path_1",
+        "path_2",
+        "path_3",
+        "path_4"
+      ],
+      "invalid_value_variables": [],
+      "missing_variables": [],
+      "provided_variables": [
+        "path_0",
+        "path_1",
+        "path_2",
+        "path_3",
+        "path_4"
+      ],
+      "unknown_variables": [],
+      "vartype": "BINARY"
+    },
+    "candidate_id": "sha256:7cdf563bf9035bbbb198dfba8a6995386625014fa84bd49a2e16eae96ffa4c1e",
     "compiled_model_hash": "sha256:eca1158e2ddfdfe196775a49b8ffbcd46a23a33bf61e18e8229dcda0174612d2",
     "embedding_metadata": {
       "embedding": null,
       "embedding_status": "not_requested"
     },
     "energy": 10.0,
+    "energy_difference": 0.0,
     "energy_recomputed": true,
     "problem_hash": "sha256:3cddd03a5881f3b71ba61c3b063f96ec47dba9f9160a634392929eca618d095f",
     "reasons": [],
+    "recomputed_energy": 10.0,
+    "rejection_reasons": [],
     "reported_energy": 10.0,
-    "solver_boundary": "external solver output is an untrusted witness until replay verifies it",
+    "schema": "noetheris.external_solver_replay.v1",
+    "solver_boundary": "external solver output is an untrusted witness until deterministic local replay verifies hashes, domain, and energy",
     "solver_metadata": {
       "source": "local_exact_solver"
     },
-    "status": "verified"
+    "status": "verified",
+    "submitted_compiled_model_hash": "sha256:eca1158e2ddfdfe196775a49b8ffbcd46a23a33bf61e18e8229dcda0174612d2",
+    "submitted_problem_hash": "sha256:3cddd03a5881f3b71ba61c3b063f96ec47dba9f9160a634392929eca618d095f",
+    "tolerance": 1e-09,
+    "verification_authority": "noetheris.local_replay"
   },
   "solution": {
     "assignment": {

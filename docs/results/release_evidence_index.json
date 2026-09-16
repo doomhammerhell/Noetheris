@@ -5,8 +5,12 @@
       "file": "docs/results/invariant_witness.json"
     },
     {
-      "bytes": 6426,
+      "bytes": 7516,
       "file": "docs/results/compiled_qubo_solution.json"
+    },
+    {
+      "bytes": 17838,
+      "file": "docs/results/external_solver_replay_examples.json"
     },
     {
       "bytes": 6529,

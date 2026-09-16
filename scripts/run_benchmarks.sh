@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-export PYTHONPATH="${PYTHONPATH:-}:$(pwd)/python"
-PYTHON_BIN="${PYTHON_BIN:-python3}"
-"${PYTHON_BIN}" benchmarks/run_benchmarks.py
+if [[ -n "${PYTHONPATH:-}" ]]; then
+  export PYTHONPATH="${PYTHONPATH}:$(pwd)/python"
+else
+  export PYTHONPATH="$(pwd)/python"
+fi
+source "$(dirname "${BASH_SOURCE[0]}")/python_env.sh"
+"${NOETHERIS_PYTHON_CMD[@]}" benchmarks/run_benchmarks.py

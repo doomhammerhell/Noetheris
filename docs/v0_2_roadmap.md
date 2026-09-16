@@ -20,7 +20,7 @@ The purpose is to make the handoff between Noetheris and optional solver ecosyst
 
 4. External witness replay
 
-   Treat solver output as an untrusted witness. Replay must verify the problem hash, compiled model hash, assignment domain, reported energy, and solver metadata.
+   Treat solver output as an untrusted witness. Replay must verify the problem hash, compiled model hash, assignment domain, reported energy, solver metadata, and embedding metadata. Accepted and rejected candidates use schema `noetheris.external_solver_replay.v1` with structured rejection reasons and artifact hashes.
 
 5. Documentation
 

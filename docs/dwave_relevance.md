@@ -20,7 +20,7 @@ Structural IR
 - Deterministic seeded annealing baseline for local experiments.
 - Structured D-Wave exchange payload with schema version and model hash.
 - Optional `dimod.BinaryQuadraticModel` construction when Ocean is installed.
-- External-sample replay against `problem_hash`, `compiled_model_hash`, assignment variables, and reported energy.
+- External-sample replay artifacts against `problem_hash`, `compiled_model_hash`, assignment variables, reported energy, solver metadata, and embedding metadata.
 
 ## What Is Deliberately Outside v0.1.0
 
@@ -31,7 +31,7 @@ Structural IR
 - Advantage or Advantage2 performance claims.
 - Hybrid solver benchmarking.
 
-These fields are represented as explicit metadata boundaries. Local artifacts use `embedding_status: "not_requested"`. A future external run must supply solver id, topology, embedding, chain settings, anneal parameters, sample counts, and chain-break statistics before Noetheris can replay the sample as a documented external witness.
+These fields are represented as explicit metadata boundaries. Local artifacts use `embedding_status: "not_requested"`. A future external run must supply solver id, topology, embedding, chain settings, anneal parameters, sample counts, and chain-break statistics before Noetheris can replay the sample as a documented external witness. Noetheris records that metadata but does not infer hardware embedding quality locally.
 
 ## Minimal Local Export
 
@@ -64,6 +64,7 @@ result = replay_external_solution(
     compiled_model_hash=compiled_problem.compiled_model_hash,
 )
 assert result["status"] == "verified"
+assert result["verification_authority"] == "noetheris.local_replay"
 ```
 
 The replay relation is the trust boundary: a solver result is useful only after local deterministic verification.

@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-export PYTHONPATH="${PYTHONPATH:-}:$(pwd)/python"
-PYTHON_BIN="${PYTHON_BIN:-python3}"
-"${PYTHON_BIN}" -m compileall python examples benchmarks
-"${PYTHON_BIN}" -m pytest
+if [[ -n "${PYTHONPATH:-}" ]]; then
+  export PYTHONPATH="${PYTHONPATH}:$(pwd)/python"
+else
+  export PYTHONPATH="$(pwd)/python"
+fi
+source "$(dirname "${BASH_SOURCE[0]}")/python_env.sh"
+"${NOETHERIS_PYTHON_CMD[@]}" -m compileall python examples benchmarks
+"${NOETHERIS_PYTHON_CMD[@]}" -m pytest
