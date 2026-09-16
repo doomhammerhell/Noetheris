@@ -12,6 +12,7 @@ python3 scripts/generate_release_results.py
 - `release_evidence_index.json`: index of generated evidence files.
 - `invariant_witness.json`: bounded consensus-safety counterexample witness with certificate data.
 - `compiled_qubo_solution.json`: Structural IR compilation, exact QUBO solution, energy breakdown, D-Wave exchange payload, and local replay of a solver sample.
+- `external_solver_replay_examples.json`: accepted and rejected external-candidate replay artifacts with explicit hash, assignment-domain, energy, and metadata rejection reasons.
 - `pqc_migration_plan.json`: migration optimizer output, residual risk, dependency analysis, QUBO model, and certificate.
 - `oracle_truth_table.json`: Boolean predicate truth table, reversible compute/apply/uncompute metrics, and QASM-like text.
 - `qaoa_hamiltonian_report.json`: QUBO-to-Ising lowering and exact local QAOA p=1 statevector check.
@@ -20,4 +21,4 @@ python3 scripts/generate_release_results.py
 
 ## Interpretation
 
-These files are release evidence, not hardware benchmark claims. The D-Wave payload is a BINARY QUBO exchange representation; any external solver sample must be replayed locally before it is trusted. The Qiskit-facing oracle artifacts are small-predicate circuit mappings; they do not claim backend advantage. The CV/GKP certificate uses finite Fock truncation and records boundary effects explicitly.
+These files are release evidence, not hardware benchmark claims. The D-Wave payload is a BINARY QUBO exchange representation; any external solver sample must be replayed locally before it is trusted. Solver and embedding metadata are recorded as externally supplied evidence; local replay does not infer hardware embedding quality. The Qiskit-facing oracle artifacts are small-predicate circuit mappings; they do not claim backend advantage. The CV/GKP certificate uses finite Fock truncation and records boundary effects explicitly.

@@ -9,6 +9,7 @@ Noetheris v0.1.0 is a bounded research kernel. Its boundaries are part of the sc
 - QUBO penalty calibration remains a modeling responsibility; weak penalties can encode the wrong preference order.
 - Circuit oracle compilation is limited to small Boolean predicates and symbolic reversible circuits.
 - Optional Qiskit and D-Wave adapters are export boundaries, not default hardware benchmark paths.
+- External solver metadata and embedding metadata are recorded as supplied evidence. Noetheris verifies hashes, assignment domains, and energies locally; it does not infer hardware embedding quality.
 - CV/GKP diagnostics use finite Fock cutoffs. Boundary artifacts are measured and certified, not ignored.
 - Approximate GKP states in this release are finite-dimensional diagnostic objects, not production fault-tolerant logical states.
 - Lean and TLA+ artifacts cover simplified kernels and scenario models, not the entire implementation.

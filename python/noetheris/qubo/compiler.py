@@ -1,9 +1,10 @@
 from __future__ import annotations
 
+from collections.abc import Mapping
 from dataclasses import dataclass, field
 import math
 import random
-from typing import Any, Mapping
+from typing import Any
 
 from noetheris.certificates import stable_problem_hash
 from noetheris.ir import StructuralSystem
@@ -267,50 +268,233 @@ def replay_external_solution(
     embedding_metadata: Mapping[str, Any] | None = None,
     tolerance: float = 1e-9,
 ) -> dict[str, Any]:
-    reasons: list[str] = []
-    if problem_hash is not None and problem_hash != compiled.problem_hash:
-        reasons.append("problem hash mismatch")
-    if compiled_model_hash is not None and compiled_model_hash != compiled.compiled_model_hash:
-        reasons.append("compiled model hash mismatch")
-    try:
-        normalized_assignment = {
-            name: bool(value) for name, value in assignment.items()
-        }
-        energy = compiled.model.evaluate(normalized_assignment)
-    except ValueError as exc:
-        return {
-            "status": "rejected",
-            "reasons": [str(exc)],
-            "solver_metadata": _jsonable(dict(solver_metadata or {})),
-            "embedding_metadata": _jsonable(dict(embedding_metadata or {})),
-        }
-    if reported_energy is not None and abs(float(reported_energy) - energy) > tolerance:
-        reasons.append("reported energy mismatch")
-    status = "verified" if not reasons else "rejected"
-    return {
-        "status": status,
-        "reasons": reasons,
-        "problem_hash": compiled.problem_hash,
-        "compiled_model_hash": compiled.compiled_model_hash,
-        "assignment": {
-            variable: normalized_assignment[variable]
-            for variable in compiled.model.variables
-        },
-        "energy": energy,
-        "reported_energy": reported_energy,
-        "energy_recomputed": status == "verified",
-        "solver_boundary": "external solver output is an untrusted witness until replay verifies it",
-        "solver_metadata": _jsonable(dict(solver_metadata or {})),
-        "embedding_metadata": _jsonable(
-            dict(
-                embedding_metadata
-                or {
-                    "embedding_status": "not_requested",
-                    "embedding": None,
-                }
+    return external_solver_replay_artifact(
+        compiled,
+        assignment,
+        reported_energy=reported_energy,
+        problem_hash=problem_hash,
+        compiled_model_hash=compiled_model_hash,
+        solver_metadata=solver_metadata,
+        embedding_metadata=embedding_metadata,
+        tolerance=tolerance,
+    )
+
+
+def external_solver_replay_artifact(
+    compiled: CompiledProblem,
+    assignment: Mapping[str, bool | int],
+    *,
+    reported_energy: float | int | None = None,
+    problem_hash: str | None = None,
+    compiled_model_hash: str | None = None,
+    solver_metadata: Mapping[str, Any] | None = None,
+    embedding_metadata: Mapping[str, Any] | None = None,
+    candidate_id: str | None = None,
+    tolerance: float = 1e-9,
+) -> dict[str, Any]:
+    reasons: list[dict[str, Any]] = []
+    supplied_problem_hash = (
+        compiled.problem_hash if problem_hash is None else str(problem_hash)
+    )
+    supplied_compiled_hash = (
+        compiled.compiled_model_hash
+        if compiled_model_hash is None
+        else str(compiled_model_hash)
+    )
+    if supplied_problem_hash != compiled.problem_hash:
+        reasons.append(
+            _replay_reason(
+                "problem_hash_mismatch",
+                "submitted problem hash does not match compiled problem hash",
+                {"submitted": supplied_problem_hash, "expected": compiled.problem_hash},
             )
-        ),
+        )
+    if supplied_compiled_hash != compiled.compiled_model_hash:
+        reasons.append(
+            _replay_reason(
+                "compiled_model_hash_mismatch",
+                "submitted compiled model hash does not match local compiled model hash",
+                {
+                    "submitted": supplied_compiled_hash,
+                    "expected": compiled.compiled_model_hash,
+                },
+            )
+        )
+
+    solver_metadata_json = _metadata_payload(
+        solver_metadata,
+        default={"source": "not_supplied"},
+        code="solver_metadata_malformed",
+        detail="solver metadata must be a JSON-compatible mapping",
+        reasons=reasons,
+    )
+    embedding_metadata_json = _metadata_payload(
+        embedding_metadata,
+        default={"embedding_status": "not_requested", "embedding": None},
+        code="embedding_metadata_malformed",
+        detail="embedding metadata must be a JSON-compatible mapping",
+        reasons=reasons,
+    )
+
+    expected_variables = list(compiled.model.variables)
+    assignment_is_mapping = isinstance(assignment, Mapping)
+    raw_assignment = (
+        _jsonable(dict(assignment))
+        if assignment_is_mapping
+        else _jsonable(assignment)
+    )
+    provided_variables = (
+        sorted(str(name) for name in assignment.keys()) if assignment_is_mapping else []
+    )
+    missing = sorted(set(expected_variables) - set(provided_variables))
+    unknown = sorted(set(provided_variables) - set(expected_variables))
+    invalid_values: list[str] = []
+    normalized_assignment: dict[str, bool] = {}
+    if not assignment_is_mapping:
+        reasons.append(
+            _replay_reason(
+                "assignment_malformed",
+                "candidate assignment must be a mapping from variables to binary values",
+                {"submitted_type": type(assignment).__name__},
+            )
+        )
+    else:
+        for variable, value in assignment.items():
+            variable_name = str(variable)
+            if variable_name in compiled.model.variables:
+                normalized = _binary_assignment_value(value)
+                if normalized is None:
+                    invalid_values.append(variable_name)
+                else:
+                    normalized_assignment[variable_name] = normalized
+    if missing:
+        reasons.append(
+            _replay_reason(
+                "assignment_missing_variables",
+                "candidate assignment does not cover the compiled model domain",
+                {"variables": missing},
+            )
+        )
+    if unknown:
+        reasons.append(
+            _replay_reason(
+                "assignment_unknown_variables",
+                "candidate assignment contains variables outside the compiled model domain",
+                {"variables": unknown},
+            )
+        )
+    if invalid_values:
+        reasons.append(
+            _replay_reason(
+                "assignment_value_malformed",
+                "candidate assignment contains non-binary values",
+                {"variables": sorted(invalid_values)},
+            )
+        )
+
+    reported_energy_value: float | None = None
+    if reported_energy is None:
+        reasons.append(
+            _replay_reason(
+                "reported_energy_missing",
+                "external candidates must include a reported energy for replay binding",
+            )
+        )
+    else:
+        try:
+            reported_energy_value = float(reported_energy)
+        except (TypeError, ValueError):
+            reasons.append(
+                _replay_reason(
+                    "reported_energy_malformed",
+                    "reported energy must be numeric",
+                    {"submitted": _jsonable(reported_energy)},
+                )
+            )
+
+    energy: float | None = None
+    domain_matches = (
+        assignment_is_mapping
+        and not missing
+        and not unknown
+        and not invalid_values
+    )
+    if domain_matches:
+        energy = compiled.model.evaluate(
+            {variable: normalized_assignment[variable] for variable in expected_variables}
+        )
+    if (
+        energy is not None
+        and reported_energy_value is not None
+        and abs(reported_energy_value - energy) > tolerance
+    ):
+        reasons.append(
+            _replay_reason(
+                "reported_energy_mismatch",
+                "reported energy does not match deterministic local replay energy",
+                {
+                    "reported_energy": reported_energy_value,
+                    "recomputed_energy": energy,
+                    "difference": reported_energy_value - energy,
+                    "tolerance": tolerance,
+                },
+            )
+        )
+
+    status = "verified" if not reasons else "rejected"
+    candidate_evidence = {
+        "problem_hash": supplied_problem_hash,
+        "compiled_model_hash": supplied_compiled_hash,
+        "assignment": raw_assignment,
+        "reported_energy": reported_energy_value,
+        "solver_metadata": solver_metadata_json,
+        "embedding_metadata": embedding_metadata_json,
     }
+    replay_candidate_id = candidate_id or stable_problem_hash(candidate_evidence)
+    ordered_assignment = (
+        {variable: normalized_assignment[variable] for variable in expected_variables}
+        if domain_matches
+        else raw_assignment
+    )
+    payload: dict[str, Any] = {
+        "schema": "noetheris.external_solver_replay.v1",
+        "candidate_id": replay_candidate_id,
+        "status": status,
+        "problem_hash": compiled.problem_hash,
+        "submitted_problem_hash": supplied_problem_hash,
+        "compiled_model_hash": compiled.compiled_model_hash,
+        "submitted_compiled_model_hash": supplied_compiled_hash,
+        "assignment_domain": {
+            "vartype": "BINARY",
+            "expected_variables": expected_variables,
+            "provided_variables": provided_variables,
+            "missing_variables": missing,
+            "unknown_variables": unknown,
+            "invalid_value_variables": sorted(invalid_values),
+        },
+        "assignment": ordered_assignment,
+        "reported_energy": reported_energy_value,
+        "recomputed_energy": energy,
+        "energy": energy,
+        "energy_difference": (
+            reported_energy_value - energy
+            if reported_energy_value is not None and energy is not None
+            else None
+        ),
+        "energy_recomputed": energy is not None,
+        "tolerance": tolerance,
+        "rejection_reasons": reasons,
+        "reasons": [reason["detail"] for reason in reasons],
+        "solver_boundary": (
+            "external solver output is an untrusted witness until deterministic "
+            "local replay verifies hashes, domain, and energy"
+        ),
+        "verification_authority": "noetheris.local_replay",
+        "solver_metadata": solver_metadata_json,
+        "embedding_metadata": embedding_metadata_json,
+    }
+    return _with_artifact_hash(payload)
+
 
 def compile_system(system: StructuralSystem, problem: str) -> CompiledProblem:
     if problem == "invariant":
@@ -391,6 +575,64 @@ def _jsonable(value: Any) -> Any:
         return {str(k): _jsonable(v) for k, v in value.items()}
     if isinstance(value, (list, tuple)):
         return [_jsonable(item) for item in value]
+    if isinstance(value, (str, int, float, bool)) or value is None:
+        return value
     if hasattr(value, "to_dict"):
-        return value.to_dict()
-    return value
+        return _jsonable(value.to_dict())
+    return str(value)
+
+
+def _metadata_payload(
+    value: Mapping[str, Any] | None,
+    *,
+    default: Mapping[str, Any],
+    code: str,
+    detail: str,
+    reasons: list[dict[str, Any]],
+) -> dict[str, Any]:
+    if value is None:
+        return _jsonable(dict(default))
+    if not isinstance(value, Mapping):
+        reasons.append(
+            _replay_reason(
+                code,
+                detail,
+                {"submitted_type": type(value).__name__},
+            )
+        )
+        return {
+            "provided": True,
+            "accepted": False,
+            "submitted_type": type(value).__name__,
+        }
+    return _jsonable(dict(value))
+
+
+def _binary_assignment_value(value: Any) -> bool | None:
+    if isinstance(value, bool):
+        return value
+    try:
+        if value == 0:
+            return False
+        if value == 1:
+            return True
+    except Exception:
+        return None
+    return None
+
+
+def _replay_reason(
+    code: str,
+    detail: str,
+    evidence: Mapping[str, Any] | None = None,
+) -> dict[str, Any]:
+    reason: dict[str, Any] = {"code": code, "detail": detail}
+    if evidence is not None:
+        reason["evidence"] = _jsonable(dict(evidence))
+    return reason
+
+
+def _with_artifact_hash(payload: Mapping[str, Any]) -> dict[str, Any]:
+    artifact = dict(payload)
+    artifact["artifact_hash"] = stable_problem_hash(artifact)
+    return artifact

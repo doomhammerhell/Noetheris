@@ -20,6 +20,7 @@ from noetheris.migration import MigrationGraph, optimize_migration_plan
 from noetheris.qubo import (
     compile_system,
     explain_solution,
+    external_solver_replay_artifact,
     replay_external_solution,
     solve_exact,
 )
@@ -60,6 +61,11 @@ def main() -> None:
                 solver_metadata={"source": "local_exact_solver"},
             ),
         },
+        artifacts,
+    )
+    _write(
+        "external_solver_replay_examples.json",
+        _external_replay_examples(compiled, solution.assignment, solution.energy),
         artifacts,
     )
 
@@ -125,6 +131,123 @@ def _write(name: str, payload: dict[str, Any], artifacts: list[dict[str, Any]]) 
             "bytes": path.stat().st_size,
         }
     )
+
+
+def _external_replay_examples(
+    compiled: Any,
+    assignment: dict[str, bool],
+    energy: float,
+) -> dict[str, Any]:
+    first_variable = compiled.model.variables[0]
+    accepted = external_solver_replay_artifact(
+        compiled,
+        assignment,
+        reported_energy=energy,
+        problem_hash=compiled.problem_hash,
+        compiled_model_hash=compiled.compiled_model_hash,
+        solver_metadata={
+            "solver": "local_exact_reference",
+            "credential_required": False,
+            "sample_source": "release_evidence",
+        },
+        embedding_metadata={
+            "embedding_status": "not_requested",
+            "embedding": None,
+        },
+        candidate_id="accepted-local-reference",
+    )
+    rejected = [
+        _replay_case(
+            "problem_hash_mismatch",
+            external_solver_replay_artifact(
+                compiled,
+                assignment,
+                reported_energy=energy,
+                problem_hash="sha256:wrong-problem",
+                compiled_model_hash=compiled.compiled_model_hash,
+                candidate_id="rejected-problem-hash",
+            ),
+        ),
+        _replay_case(
+            "compiled_model_hash_mismatch",
+            external_solver_replay_artifact(
+                compiled,
+                assignment,
+                reported_energy=energy,
+                problem_hash=compiled.problem_hash,
+                compiled_model_hash="sha256:wrong-compiled-model",
+                candidate_id="rejected-compiled-model-hash",
+            ),
+        ),
+        _replay_case(
+            "missing_variables",
+            external_solver_replay_artifact(
+                compiled,
+                {
+                    variable: value
+                    for variable, value in assignment.items()
+                    if variable != first_variable
+                },
+                reported_energy=energy,
+                problem_hash=compiled.problem_hash,
+                compiled_model_hash=compiled.compiled_model_hash,
+                candidate_id="rejected-missing-variable",
+            ),
+        ),
+        _replay_case(
+            "unknown_variables",
+            external_solver_replay_artifact(
+                compiled,
+                {**assignment, "outside_compiled_domain": True},
+                reported_energy=energy,
+                problem_hash=compiled.problem_hash,
+                compiled_model_hash=compiled.compiled_model_hash,
+                candidate_id="rejected-unknown-variable",
+            ),
+        ),
+        _replay_case(
+            "energy_mismatch",
+            external_solver_replay_artifact(
+                compiled,
+                assignment,
+                reported_energy=energy + 1.0,
+                problem_hash=compiled.problem_hash,
+                compiled_model_hash=compiled.compiled_model_hash,
+                candidate_id="rejected-energy-mismatch",
+            ),
+        ),
+        _replay_case(
+            "malformed_metadata",
+            external_solver_replay_artifact(
+                compiled,
+                assignment,
+                reported_energy=energy,
+                problem_hash=compiled.problem_hash,
+                compiled_model_hash=compiled.compiled_model_hash,
+                solver_metadata="not-a-mapping",  # type: ignore[arg-type]
+                embedding_metadata="not-a-mapping",  # type: ignore[arg-type]
+                candidate_id="rejected-malformed-metadata",
+            ),
+        ),
+    ]
+    return {
+        "schema": "noetheris.external_solver_replay.examples.v1",
+        "credential_required": False,
+        "verification_authority": "noetheris.local_replay",
+        "accepted_candidate": accepted,
+        "rejected_candidates": rejected,
+    }
+
+
+def _replay_case(name: str, artifact: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "case": name,
+        "status": artifact["status"],
+        "reason_codes": [
+            reason["code"] for reason in artifact["rejection_reasons"]
+        ],
+        "artifact": artifact,
+    }
 
 
 if __name__ == "__main__":

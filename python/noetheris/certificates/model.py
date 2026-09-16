@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections.abc import Mapping as RuntimeMapping
 from dataclasses import dataclass, field
 import hashlib
 import json
@@ -268,6 +269,7 @@ def validate_certificate(
         if constraint.satisfied:
             reasons.append(f"violated constraint {constraint.name} is marked true")
         reasons.append(f"constraint {constraint.name} is violated")
+    _validate_external_replay_evidence(cert, reasons, tolerance)
     derived_status = "verified" if not reasons else "rejected"
     if cert.verification_status != derived_status:
         reasons.append("declared verification status is inconsistent")
@@ -288,3 +290,66 @@ def certificate_fingerprint(certificate: EnergyCertificate | Mapping[str, Any]) 
         else certificate
     )
     return stable_problem_hash(cert.to_dict())
+
+
+def _validate_external_replay_evidence(
+    cert: EnergyCertificate,
+    reasons: list[str],
+    tolerance: float,
+) -> None:
+    for key in (
+        "external_replay",
+        "external_replay_artifact",
+        "external_sample_replay",
+        "external_solver_replay",
+    ):
+        if key not in cert.energy_breakdown:
+            continue
+        evidence = cert.energy_breakdown[key]
+        if not isinstance(evidence, RuntimeMapping):
+            reasons.append(f"{key} evidence is malformed")
+            continue
+        if evidence.get("schema") != "noetheris.external_solver_replay.v1":
+            reasons.append(f"{key} schema is not recognized")
+        if evidence.get("status") != "verified":
+            reasons.append(f"{key} evidence is not verified")
+        if evidence.get("energy_recomputed") is not True:
+            reasons.append(f"{key} energy was not recomputed")
+        if evidence.get("problem_hash") != cert.problem_hash:
+            reasons.append(f"{key} problem hash mismatch")
+        if (
+            cert.compiled_model_hash is not None
+            and evidence.get("compiled_model_hash") != cert.compiled_model_hash
+        ):
+            reasons.append(f"{key} compiled model hash mismatch")
+        if evidence.get("rejection_reasons"):
+            reasons.append(f"{key} contains rejection reasons")
+        assignment_domain = evidence.get("assignment_domain")
+        if not isinstance(assignment_domain, RuntimeMapping):
+            reasons.append(f"{key} assignment domain is malformed")
+        else:
+            if assignment_domain.get("missing_variables"):
+                reasons.append(f"{key} assignment domain has missing variables")
+            if assignment_domain.get("unknown_variables"):
+                reasons.append(f"{key} assignment domain has unknown variables")
+            if assignment_domain.get("invalid_value_variables"):
+                reasons.append(f"{key} assignment domain has invalid values")
+        for metadata_key in ("solver_metadata", "embedding_metadata"):
+            if not isinstance(evidence.get(metadata_key), RuntimeMapping):
+                reasons.append(f"{key} {metadata_key} is malformed")
+        reported = evidence.get("reported_energy")
+        recomputed = evidence.get("recomputed_energy")
+        try:
+            if reported is not None and recomputed is not None:
+                if abs(float(reported) - float(recomputed)) > tolerance:
+                    reasons.append(f"{key} replay energy mismatch")
+        except (TypeError, ValueError):
+            reasons.append(f"{key} replay energy is malformed")
+        artifact_hash = evidence.get("artifact_hash")
+        if not isinstance(artifact_hash, str):
+            reasons.append(f"{key} artifact hash is missing")
+            continue
+        canonical = dict(evidence)
+        canonical.pop("artifact_hash", None)
+        if stable_problem_hash(canonical) != artifact_hash:
+            reasons.append(f"{key} artifact hash mismatch")

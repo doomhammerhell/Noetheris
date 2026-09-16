@@ -48,3 +48,22 @@ def test_qiskit_oracle_export_example_has_exact_local_semantics() -> None:
     assert payload["oracle_metrics"]["cleanup_gate_count"] >= 1
     assert payload["truth_table"]["11111"] == 1
     assert payload["truth_table"]["10011"] == 0
+
+
+def test_external_solver_replay_example_has_accept_and_reject_evidence() -> None:
+    payload = _run_example("external_solver_replay.py")
+    assert payload["credential_required"] is False
+    assert payload["verification_authority"] == "noetheris.local_replay"
+    assert payload["accepted_candidate"]["status"] == "verified"
+    assert payload["accepted_candidate"]["artifact_hash"].startswith("sha256:")
+    rejected = {item["case"]: item for item in payload["rejected_candidates"]}
+    assert "problem_hash_mismatch" in rejected["problem_hash_mismatch"]["reason_codes"]
+    assert (
+        "compiled_model_hash_mismatch"
+        in rejected["compiled_model_hash_mismatch"]["reason_codes"]
+    )
+    assert "assignment_missing_variables" in rejected["missing_variables"]["reason_codes"]
+    assert "assignment_unknown_variables" in rejected["unknown_variables"]["reason_codes"]
+    assert "reported_energy_mismatch" in rejected["energy_mismatch"]["reason_codes"]
+    assert "solver_metadata_malformed" in rejected["malformed_metadata"]["reason_codes"]
+    assert "embedding_metadata_malformed" in rejected["malformed_metadata"]["reason_codes"]
