@@ -10,7 +10,14 @@
     },
     {
       "bytes": 17838,
-      "file": "docs/results/external_solver_replay_examples.json"
+      "file": "docs/results/external_solver_replay_examples.json",
+      "schema": "noetheris.external_solver_replay.examples.v1"
+    },
+    {
+      "bytes": 2707,
+      "file": "docs/results/solver_boundary_evidence.json",
+      "schema": "noetheris.solver_boundary_evidence.v1",
+      "scope": "v0.2 deterministic solver-boundary evidence"
     },
     {
       "bytes": 6529,
@@ -35,5 +42,7 @@
   ],
   "regenerate": "python3 scripts/generate_release_results.py",
   "release": "Noetheris v0.1.0 \u2014 Structural Quantum Security Kernel",
+  "roadmap_scope": "v0.2 solver-boundary evidence included",
+  "schema": "noetheris.release_evidence_index.v1",
   "scope": "deterministic release evidence"
 }

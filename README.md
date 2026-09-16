@@ -30,6 +30,7 @@ Noetheris does not claim quantum advantage, does not assess deployed cryptograph
 | Structural IR validation and hashing | `tests/test_structural_ir.py`, `examples/structural_ir/*.json`, `docs/results/compiled_qubo_solution.json` |
 | QUBO/Ising energy preservation | `tests/test_qubo.py`, `examples/qubo_ising_qaoa.py`, `docs/results/qaoa_hamiltonian_report.json` |
 | D-Wave/Ocean boundary | `tests/test_optional_integrations.py`, `tests/test_external_examples.py`, `examples/dwave_ocean_exchange.py`, `examples/external_solver_replay.py`, `docs/results/compiled_qubo_solution.json`, `docs/results/external_solver_replay_examples.json`, `docs/dwave_mapping.md` |
+| Solver-boundary evidence schema | `docs/results/solver_boundary_evidence.json`, `docs/results/release_evidence_index.json`, `docs/reproducibility.md`, `docs/benchmarks.md` |
 | IBM/Qiskit oracle boundary | `tests/test_circuits.py`, `tests/test_optional_integrations.py`, `tests/test_external_examples.py`, `examples/qiskit_oracle_export.py`, `docs/results/oracle_truth_table.json` |
 | Certificate replay | `tests/test_certificates.py`, `examples/example_energy_certificate.json`, `docs/results/invariant_witness.json` |
 | CV/GKP diagnostics | `tests/test_cv.py`, `examples/cv_gkp_stabilizer_diagnostics.py`, `docs/results/cv_gkp_diagnostic_certificate.json` |

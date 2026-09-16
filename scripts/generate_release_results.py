@@ -42,6 +42,18 @@ def main() -> None:
     )
     compiled = compile_system(structural, "invariant")
     solution = solve_exact(compiled)
+    exchange = qubo_exchange_payload(compiled.model)
+    sample_replay = replay_external_solution(
+        compiled,
+        solution.assignment,
+        reported_energy=solution.energy,
+        problem_hash=compiled.problem_hash,
+        compiled_model_hash=compiled.compiled_model_hash,
+        solver_metadata={"source": "local_exact_solver"},
+    )
+    replay_examples = _external_replay_examples(
+        compiled, solution.assignment, solution.energy
+    )
     _write(
         "compiled_qubo_solution.json",
         {
@@ -51,21 +63,19 @@ def main() -> None:
                 "energy": solution.energy,
             },
             "explanation": explain_solution(compiled, solution),
-            "dwave_exchange": qubo_exchange_payload(compiled.model),
-            "external_sample_replay": replay_external_solution(
-                compiled,
-                solution.assignment,
-                reported_energy=solution.energy,
-                problem_hash=compiled.problem_hash,
-                compiled_model_hash=compiled.compiled_model_hash,
-                solver_metadata={"source": "local_exact_solver"},
-            ),
+            "dwave_exchange": exchange,
+            "external_sample_replay": sample_replay,
         },
         artifacts,
     )
     _write(
         "external_solver_replay_examples.json",
-        _external_replay_examples(compiled, solution.assignment, solution.energy),
+        replay_examples,
+        artifacts,
+    )
+    _write(
+        "solver_boundary_evidence.json",
+        _solver_boundary_evidence(compiled, exchange, sample_replay, replay_examples),
         artifacts,
     )
 
@@ -113,8 +123,10 @@ def main() -> None:
     _write(
         "release_evidence_index.json",
         {
+            "schema": "noetheris.release_evidence_index.v1",
             "release": "Noetheris v0.1.0 — Structural Quantum Security Kernel",
             "scope": "deterministic release evidence",
+            "roadmap_scope": "v0.2 solver-boundary evidence included",
             "regenerate": "python3 scripts/generate_release_results.py",
             "artifacts": artifacts,
         },
@@ -126,11 +138,115 @@ def _write(name: str, payload: dict[str, Any], artifacts: list[dict[str, Any]]) 
     path = RESULTS / name
     path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     artifacts.append(
+        _artifact_index_entry(
+            payload,
+            file=f"docs/results/{name}",
+            byte_count=path.stat().st_size,
+        )
+    )
+
+
+def _artifact_index_entry(
+    payload: dict[str, Any],
+    *,
+    file: str,
+    byte_count: int,
+) -> dict[str, Any]:
+    entry: dict[str, Any] = {
+        "file": file,
+        "bytes": byte_count,
+    }
+    if "schema" in payload:
+        entry["schema"] = payload["schema"]
+    if "scope" in payload:
+        entry["scope"] = payload["scope"]
+    return entry
+
+
+def _solver_boundary_evidence(
+    compiled: Any,
+    exchange: dict[str, Any],
+    replay: dict[str, Any],
+    replay_examples: dict[str, Any],
+) -> dict[str, Any]:
+    reason_codes = sorted(
         {
-            "file": f"docs/results/{name}",
-            "bytes": path.stat().st_size,
+            reason_code
+            for candidate in replay_examples["rejected_candidates"]
+            for reason_code in candidate["reason_codes"]
         }
     )
+    return {
+        "schema": "noetheris.solver_boundary_evidence.v1",
+        "scope": "v0.2 deterministic solver-boundary evidence",
+        "host_independent": True,
+        "runtime_seconds": None,
+        "runtime_policy": (
+            "committed evidence excludes wall-clock timing and installed optional "
+            "package state"
+        ),
+        "problem": {
+            "problem_type": compiled.problem_type,
+            "problem_hash": compiled.problem_hash,
+            "compiled_model_hash": compiled.compiled_model_hash,
+        },
+        "qubo_exchange": {
+            "schema": exchange["format"],
+            "model_hash": exchange["model_hash"],
+            "vartype": exchange["vartype"],
+            "variable_count": len(exchange["variables"]),
+            "linear_term_count": len(exchange["linear_terms"]),
+            "quadratic_term_count": len(exchange["quadratic_terms"]),
+            "normalization": exchange["normalization"],
+        },
+        "candidate_replay": {
+            "schema": replay["schema"],
+            "status": replay["status"],
+            "artifact_hash": replay["artifact_hash"],
+            "reported_energy": replay["reported_energy"],
+            "recomputed_energy": replay["recomputed_energy"],
+            "energy_recomputed": replay["energy_recomputed"],
+            "verification_authority": replay["verification_authority"],
+        },
+        "rejection_coverage": {
+            "case_count": len(replay_examples["rejected_candidates"]),
+            "reason_codes": reason_codes,
+        },
+        "optional_ecosystem_availability": {
+            "ocean": {
+                "committed_availability": "not_assumed",
+                "credential_required": False,
+                "runtime_probe_command": "python3 examples/dwave_ocean_exchange.py",
+                "availability_field": "ocean_bqm_report.available",
+                "host_independent": True,
+            },
+            "qiskit": {
+                "committed_availability": "not_assumed",
+                "credential_required": False,
+                "runtime_probe_command": "python3 examples/qiskit_oracle_export.py",
+                "availability_field": "qiskit_status.available",
+                "host_independent": True,
+            },
+        },
+        "metadata_boundaries": {
+            "solver_metadata": {
+                "authority": "external_tool",
+                "local_interpretation": "recorded_evidence_only",
+            },
+            "embedding_metadata": {
+                "authority": "external_tool",
+                "local_interpretation": "recorded_evidence_only",
+                "local_default": {
+                    "embedding_status": "not_requested",
+                    "embedding": None,
+                },
+            },
+            "hardware_claims": {
+                "hardware_benchmark": False,
+                "quantum_advantage": False,
+            },
+        },
+    }
 
 
 def _external_replay_examples(
