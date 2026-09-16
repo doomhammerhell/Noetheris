@@ -34,6 +34,7 @@ def main() -> None:
                 "policy": "2-of-3 custody authorization with whitelist and time window",
                 "qiskit_status": exported["status"],
                 "oracle_metrics": exported["oracle_metrics"],
+                "semantic_report": exported["semantic_report"],
                 "truth_table": exported["truth_table"],
                 "qiskit_circuit_summary": exported["qiskit_circuit_summary"],
                 "qasm_like": exported["qasm_like"].splitlines(),

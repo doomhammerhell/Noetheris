@@ -20,13 +20,16 @@ Structural predicate
 - Metrics for logical variables, ancilla count, cleanup gates, gate count, and depth estimate.
 - QASM-like text for review without Qiskit.
 - Optional Qiskit circuit synthesis from truth tables for small predicates when Qiskit is installed.
+- Semantic export reports comparing `BoolExpr`, symbolic-oracle truth tables, reversibility checks, and optional local `QuantumCircuit` summaries.
 - Exact local QAOA p=1 statevector check over tiny QUBO-derived Hamiltonians.
 
 ## Trust Boundary
 
 The Qiskit export path is an integration boundary, not a backend-execution claim. It requires no IBM Quantum credentials. It does not model transpilation, calibration, noise, scheduling, dynamic circuits, queue behavior, or fault-tolerant resources.
 
-The symbolic oracle and Qiskit export are exponential in predicate width when synthesized from truth tables. That is acceptable for v0.1.0 release evidence because the goal is semantic correctness for small predicates, not scalable circuit synthesis.
+The symbolic oracle and Qiskit export are exponential in predicate width when synthesized from truth tables. That is acceptable for release evidence because the goal is semantic correctness for small predicates, not scalable circuit synthesis.
+
+The optional Qiskit summary is not a simulation result. It records a local `QuantumCircuit` produced from the verified truth table and keeps `backend_execution: false`.
 
 ## Minimal Local Export
 
