@@ -6,3 +6,4 @@ import Noetheris.StructuralIR
 import Noetheris.QuboEnergy
 import Noetheris.MigrationPolicy
 import Noetheris.CircuitOracle
+import Noetheris.ReplayBoundary

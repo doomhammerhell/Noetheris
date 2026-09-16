@@ -42,4 +42,4 @@ When a certificate includes `external_replay_artifact`, `external_replay`, `exte
 
 ## Formal Surface
 
-Lean models a simplified certificate-validity predicate and small true lemmas. The executable Python/Rust validators are the release enforcement path; Lean artifacts define reviewable kernels rather than whole-repository proofs.
+Lean models a simplified certificate-validity predicate, a replay-boundary acceptance predicate, and small true lemmas. The replay kernel states that an accepted candidate preserves reported/recomputed energy equality and hash identity under a declared context. The executable Python/Rust validators are the release enforcement path; Lean artifacts define reviewable kernels rather than whole-repository proofs.
