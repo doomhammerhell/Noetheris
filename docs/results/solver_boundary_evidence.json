@@ -1,0 +1,80 @@
+{
+  "candidate_replay": {
+    "artifact_hash": "sha256:d1888865d53521446dd39af85d8820ba966ce263e239c921edeeea4911dbecd8",
+    "energy_recomputed": true,
+    "recomputed_energy": 10.0,
+    "reported_energy": 10.0,
+    "schema": "noetheris.external_solver_replay.v1",
+    "status": "verified",
+    "verification_authority": "noetheris.local_replay"
+  },
+  "host_independent": true,
+  "metadata_boundaries": {
+    "embedding_metadata": {
+      "authority": "external_tool",
+      "local_default": {
+        "embedding": null,
+        "embedding_status": "not_requested"
+      },
+      "local_interpretation": "recorded_evidence_only"
+    },
+    "hardware_claims": {
+      "hardware_benchmark": false,
+      "quantum_advantage": false
+    },
+    "solver_metadata": {
+      "authority": "external_tool",
+      "local_interpretation": "recorded_evidence_only"
+    }
+  },
+  "optional_ecosystem_availability": {
+    "ocean": {
+      "availability_field": "ocean_bqm_report.available",
+      "committed_availability": "not_assumed",
+      "credential_required": false,
+      "host_independent": true,
+      "runtime_probe_command": "python3 examples/dwave_ocean_exchange.py"
+    },
+    "qiskit": {
+      "availability_field": "qiskit_status.available",
+      "committed_availability": "not_assumed",
+      "credential_required": false,
+      "host_independent": true,
+      "runtime_probe_command": "python3 examples/qiskit_oracle_export.py"
+    }
+  },
+  "problem": {
+    "compiled_model_hash": "sha256:eca1158e2ddfdfe196775a49b8ffbcd46a23a33bf61e18e8229dcda0174612d2",
+    "problem_hash": "sha256:3cddd03a5881f3b71ba61c3b063f96ec47dba9f9160a634392929eca618d095f",
+    "problem_type": "invariant"
+  },
+  "qubo_exchange": {
+    "linear_term_count": 4,
+    "model_hash": "sha256:abb217c2c5893c3dc6bf88de18b2ad53c9a54dc19799398fdd1bd41d7ad6aad7",
+    "normalization": {
+      "duplicate_pairs": "aggregated",
+      "reversed_pairs": "ordered_by_variable_list",
+      "self_quadratic": "folded_into_linear"
+    },
+    "quadratic_term_count": 10,
+    "schema": "noetheris.qubo.exchange.v1",
+    "variable_count": 5,
+    "vartype": "BINARY"
+  },
+  "rejection_coverage": {
+    "case_count": 6,
+    "reason_codes": [
+      "assignment_missing_variables",
+      "assignment_unknown_variables",
+      "compiled_model_hash_mismatch",
+      "embedding_metadata_malformed",
+      "problem_hash_mismatch",
+      "reported_energy_mismatch",
+      "solver_metadata_malformed"
+    ]
+  },
+  "runtime_policy": "committed evidence excludes wall-clock timing and installed optional package state",
+  "runtime_seconds": null,
+  "schema": "noetheris.solver_boundary_evidence.v1",
+  "scope": "v0.2 deterministic solver-boundary evidence"
+}
