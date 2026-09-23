@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.2.0 — External Solver Boundary
+
+- Added canonical QUBO exchange parity checks across internal models, canonicalized models, structured exchange payloads, and optional local Ocean BQM energy reports.
+- Added no-credential Ocean and Qiskit examples that enrich local reports when optional packages are installed while preserving deterministic local authority.
+- Added external solver replay artifacts with schema `noetheris.external_solver_replay.v1`, structured rejection reasons, artifact hashes, assignment-domain checks, and solver/embedding metadata boundaries.
+- Added certificate fail-closed validation for inconsistent embedded external replay evidence.
+- Added deterministic solver-boundary release evidence under `docs/results/solver_boundary_evidence.json`.
+- Added Lean and TLA+ replay-boundary formal artifacts scoped to simplified kernels.
+- Hardened Python runner selection for macOS universal Python environments.
+
 ## 0.1.0 — Structural Quantum Security Kernel
 
 - Added Structural IR in Rust and Python with canonical hashing and validation.
