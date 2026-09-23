@@ -52,7 +52,7 @@ hex_terms=(
 )
 pattern="$(for encoded in "${hex_terms[@]}"; do printf '%s\n' "${encoded}" | xxd -r -p; done | paste -sd '|' -)"
 if rg -n -i "${pattern}" \
-  README.md RELEASE_NOTES_v0.1.0.md SECURITY.md CONTRIBUTING.md CODE_OF_CONDUCT.md ROADMAP.md CHANGELOG.md \
+  README.md RELEASE_NOTES_v0.1.0.md RELEASE_NOTES_v0.2.0.md SECURITY.md CONTRIBUTING.md CODE_OF_CONDUCT.md ROADMAP.md CHANGELOG.md \
   docs python crates examples tests formal scripts benchmarks .github; then
   echo "audit phrase scan failed" >&2
   exit 1
